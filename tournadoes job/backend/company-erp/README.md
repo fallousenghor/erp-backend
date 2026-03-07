@@ -1,0 +1,165 @@
+# 🏢 Company ERP
+
+> Enterprise Resource Planning System — Java 21 | Spring Boot 3.2 | DDD + Hexagonal Architecture
+
+---
+
+## 🧠 Architecture
+
+Ce projet suit une **Architecture Hexagonale (Ports & Adapters)** couplée au **Domain-Driven Design (DDD)** et à un **CQRS léger**.
+
+```
+Présentation → Application → Domain ← Infrastructure
+```
+
+Chaque module est **autonome** et structuré en 4 couches strictes :
+
+| Couche | Contenu |
+|--------|---------|
+| `domain/` | Aggregates, Entities, Value Objects, Domain Events, Repository interfaces |
+| `application/` | Services, Commands, Queries, DTOs, Mappers |
+| `infrastructure/` | JPA repositories, Specifications, Event adapters |
+| `presentation/` | REST Controllers |
+
+---
+
+## 📦 Modules
+
+| Module | Description |
+|--------|-------------|
+| `auth` | Authentification JWT, RBAC, gestion utilisateurs |
+| `organization` | Départements, postes, historique |
+| `hr` | Employés, contrats, congés, présences, salaires |
+| `finance` | Factures, paiements, dépenses |
+| `inventory` | Matériels, affectations |
+| `education` | Programmes, étudiants, enseignants, inscriptions, notes |
+| `dashboard` | Statistiques read-only via projections |
+
+---
+
+## 🚀 Démarrage rapide
+
+### Prérequis
+- Java 21+
+- Maven 3.9+
+- Docker & Docker Compose
+
+### Avec Docker Compose
+
+```bash
+# Cloner le projet
+git clone https://github.com/company/erp.git
+cd erp
+
+# Copier les variables d'environnement
+cp .env.example .env
+# Éditer .env avec vos valeurs
+
+# Démarrer (PostgreSQL + Application)
+docker-compose up -d
+
+# Vérifier les logs
+docker-compose logs -f erp-app
+```
+
+L'API sera disponible sur : http://localhost:8080/api
+
+### En local (dev)
+
+```bash
+# Démarrer PostgreSQL uniquement
+docker-compose up -d postgres
+
+# Lancer l'application
+./mvnw spring-boot:run -Dspring-boot.run.profiles=dev
+```
+
+---
+
+## 🔐 Sécurité
+
+- **JWT Access Token** : 15 minutes
+- **JWT Refresh Token** : 7 jours avec rotation automatique
+- **BCrypt** pour le hachage des mots de passe
+- **Account lock** après 5 tentatives échouées
+- **RBAC** granulaire via `@PreAuthorize`
+
+---
+
+## 📖 Documentation API
+
+Swagger UI disponible (en mode dev) :
+```
+http://localhost:8080/api/swagger-ui.html
+```
+
+---
+
+## 🧪 Tests
+
+```bash
+# Tests unitaires
+./mvnw test
+
+# Tests d'intégration (Testcontainers)
+./mvnw verify -P integration-tests
+
+# Rapport de couverture (JaCoCo)
+./mvnw verify
+open target/site/jacoco/index.html
+```
+
+---
+
+## 📁 Structure du projet
+
+```
+com.company.erp
+├── config/           — Configurations Spring
+├── security/         — JWT, RBAC, Filters
+├── shared/           — BaseEntity, Audit, Exceptions, Responses
+└── modules/
+    ├── auth/
+    ├── organization/
+    ├── hr/
+    ├── finance/
+    ├── inventory/
+    ├── education/
+    └── dashboard/
+```
+
+---
+
+## 🛠 Stack technique
+
+| Technologie | Version |
+|-------------|---------|
+| Java | 21 |
+| Spring Boot | 3.2.5 |
+| Spring Security | 6.x |
+| PostgreSQL | 16 |
+| Flyway | 10.x |
+| MapStruct | 1.5.5 |
+| JJWT | 0.12.5 |
+| Testcontainers | 1.19.8 |
+| Springdoc OpenAPI | 2.5.0 |
+
+---
+
+## 📋 Variables d'environnement
+
+| Variable | Description | Défaut |
+|----------|-------------|--------|
+| `DB_URL` | URL JDBC PostgreSQL | `jdbc:postgresql://localhost:5432/company_erp` |
+| `DB_USERNAME` | Utilisateur DB | `erp_user` |
+| `DB_PASSWORD` | Mot de passe DB | — |
+| `JWT_SECRET` | Clé secrète JWT (min 256 bits) | — |
+| `JWT_ACCESS_EXPIRATION` | Durée access token (ms) | `900000` |
+| `JWT_REFRESH_EXPIRATION` | Durée refresh token (ms) | `604800000` |
+| `SPRING_PROFILES_ACTIVE` | Profil Spring | `dev` |
+
+---
+
+## 📜 Licence
+
+Propriétaire — Company Internal Use Only

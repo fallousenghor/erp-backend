@@ -1,0 +1,4 @@
+#!/bin/sh
+# Maven Wrapper Script — generated stub
+# Run: mvn wrapper:wrapper to generate proper mvnw
+exec mvn "$@"

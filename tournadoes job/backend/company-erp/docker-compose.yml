@@ -1,0 +1,52 @@
+version: '3.9'
+
+# ==============================================================================
+# COMPANY ERP — Docker Compose (Development)
+# ==============================================================================
+
+services:
+
+  # ============================================================================
+  # ERP Application (connected to Neon Database)
+  # ============================================================================
+  erp-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: erp-application
+    restart: unless-stopped
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      DB_URL: jdbc:postgresql://ep-withered-waterfall-ailzv9fq-pooler.c-4.us-east-1.aws.neon.tech:5432/neondb?sslmode=require&channel_binding=require
+      DB_USERNAME: neondb_owner
+      DB_PASSWORD: npg_xCvr8wiYcZ4a
+      JWT_SECRET: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
+      JWT_ACCESS_EXPIRATION: 900000
+      JWT_REFRESH_EXPIRATION: 604800000
+      SERVER_PORT: 8080
+    ports:
+      - "8080:8080"
+    volumes:
+      - app_logs:/app/logs
+    networks:
+      - erp-network
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:8080/api/actuator/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+# ==============================================================================
+# VOLUMES
+# ==============================================================================
+volumes:
+  app_logs:
+    driver: local
+
+# ==============================================================================
+# NETWORKS
+# ==============================================================================
+networks:
+  erp-network:
+    driver: bridge
