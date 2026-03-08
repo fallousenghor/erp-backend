@@ -17,6 +17,9 @@ public class AttendanceRepositoryImpl implements AttendanceRepository {
     private final AttendanceJpaRepository jpaRepository;
 
     @Override public Attendance save(Attendance a)                              { return jpaRepository.save(a); }
+    
+    @Override public Optional<Attendance> findById(UUID id)                   { return jpaRepository.findById(id); }
+    
     @Override public boolean existsByEmployeeIdAndDate(UUID id, LocalDate d)   { return jpaRepository.existsByEmployeeIdAndAttendanceDate(id, d); }
 
     @Override

@@ -24,13 +24,21 @@ public class UserDetailsImpl implements UserDetails {
     private final String password;
     private final boolean enabled;
     private final boolean accountNonLocked;
+    private final Set<String> roles;
     private final Set<String> permissions;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return permissions.stream()
-                .map(SimpleGrantedAuthority::new)
+        // Include both roles (with ROLE_ prefix) and permissions as authorities
+        Set<GrantedAuthority> authorities = roles.stream()
+                .map(role -> new SimpleGrantedAuthority("ROLE_" + role))
                 .collect(Collectors.toSet());
+        
+        authorities.addAll(permissions.stream()
+                .map(SimpleGrantedAuthority::new)
+                .collect(Collectors.toSet()));
+        
+        return authorities;
     }
 
     @Override

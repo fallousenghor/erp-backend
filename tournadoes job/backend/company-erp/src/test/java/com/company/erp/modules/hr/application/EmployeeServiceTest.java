@@ -9,6 +9,7 @@ import com.company.erp.modules.hr.domain.model.valueobject.Contract;
 import com.company.erp.modules.hr.domain.repository.EmployeeRepository;
 import com.company.erp.shared.event.DomainEventPublisher;
 import com.company.erp.shared.exception.BusinessException;
+import com.company.erp.shared.service.QRCodeService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -29,6 +30,7 @@ class EmployeeServiceTest {
     @Mock private EmployeeRepository employeeRepository;
     @Mock private EmployeeMapper employeeMapper;
     @Mock private DomainEventPublisher eventPublisher;
+    @Mock private QRCodeService qrCodeService;
 
     @InjectMocks private EmployeeService employeeService;
 

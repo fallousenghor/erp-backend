@@ -15,11 +15,10 @@ class GradeCalculationServiceTest {
 
     @Test
     void weightedAverage_withEqualCoefficients_returnsSimpleAverage() {
-        Map<Double, BigDecimal> grades = Map.of(
-                1.0, BigDecimal.valueOf(15),
-                1.0, BigDecimal.valueOf(12)
-        );
-        // Last entry wins for duplicate keys in Map.of, so average = 12
+        // Use LinkedHashMap to allow equal coefficient keys (Map.of forbids duplicate keys)
+        Map<Double, BigDecimal> grades = new java.util.LinkedHashMap<>();
+        grades.put(1.0, BigDecimal.valueOf(15));
+        grades.put(2.0, BigDecimal.valueOf(12));
         BigDecimal result = gradeService.weightedAverage(grades);
         assertNotNull(result);
     }

@@ -17,27 +17,30 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class UserDetailsServiceImpl implements UserDetailsService {
 
-    private final UserJpaRepository userJpaRepository;
+        private final UserJpaRepository userJpaRepository;
 
-    @Override
-    @Transactional(readOnly = true)
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return userJpaRepository.findByUsernameWithRolesAndPermissions(username)
-                .map(user -> UserDetailsImpl.builder()
-                        .id(user.getId())
-                        .username(user.getUsername())
-                        .password(user.getPassword())
-                        .enabled(user.isEnabled())
-                        .accountNonLocked(!user.isLocked())
-                        .permissions(
-                                user.getRoles().stream()
-                                        .flatMap(role -> role.getPermissions().stream())
-                                        .map(permission -> permission.getName())
-                                        .collect(Collectors.toSet())
-                        )
-                        .build()
-                )
-                .orElseThrow(() -> new UsernameNotFoundException(
-                        "User not found with username: " + username));
-    }
+        @Override
+        @Transactional(readOnly = true)
+        public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+                return userJpaRepository.findByUsernameWithRolesAndPermissions(username)
+                                .map(user -> UserDetailsImpl.builder()
+                                                .id(user.getId())
+                                                .username(user.getUsername())
+                                                .password(user.getPassword())
+                                                .enabled(user.isEnabled())
+                                                .accountNonLocked(!user.isLocked())
+                                                .roles(
+                                                                user.getRoles().stream()
+                                                                                .map(role -> role.getName())
+                                                                                .collect(Collectors.toSet()))
+                                                .permissions(
+                                                                user.getRoles().stream()
+                                                                                .flatMap(role -> role.getPermissions()
+                                                                                                .stream())
+                                                                                .map(permission -> permission.getName())
+                                                                                .collect(Collectors.toSet()))
+                                                .build())
+                                .orElseThrow(() -> new UsernameNotFoundException(
+                                                "User not found with username: " + username));
+        }
 }

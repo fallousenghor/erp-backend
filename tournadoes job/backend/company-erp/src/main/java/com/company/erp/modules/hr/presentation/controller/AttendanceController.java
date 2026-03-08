@@ -37,6 +37,22 @@ public class AttendanceController {
                 attendanceService.recordAttendance(employeeId, date, checkIn, checkOut, status, notes)));
     }
 
+    @PutMapping("/{attendanceId}")
+    public ResponseEntity<ApiResponse<AttendanceResponse>> update(
+            @PathVariable UUID attendanceId,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalTime checkIn,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalTime checkOut,
+            @RequestParam(required = false) Attendance.AttendanceStatus status,
+            @RequestParam(required = false) String notes) {
+        return ResponseEntity.ok(ApiResponse.success(
+                attendanceService.updateAttendance(attendanceId, checkIn, checkOut, status, notes)));
+    }
+
+    @GetMapping("/{attendanceId}")
+    public ResponseEntity<ApiResponse<AttendanceResponse>> getById(@PathVariable UUID attendanceId) {
+        return ResponseEntity.ok(ApiResponse.success(attendanceService.findById(attendanceId)));
+    }
+
     @GetMapping("/employee/{employeeId}")
     public ResponseEntity<ApiResponse<List<AttendanceResponse>>> findByEmployee(
             @PathVariable UUID employeeId,

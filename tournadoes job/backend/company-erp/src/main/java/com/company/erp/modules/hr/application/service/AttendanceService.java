@@ -28,9 +28,17 @@ public class AttendanceService {
                                                 LocalTime checkIn, LocalTime checkOut,
                                                 Attendance.AttendanceStatus status,
                                                 String notes) {
-        if (attendanceRepository.existsByEmployeeIdAndDate(employeeId, date)) {
-            throw new BusinessException(ErrorCode.CONFLICT,
-                    "Attendance already recorded for employee on " + date);
+        // Check if attendance already exists for this employee and date
+        var existingAttendance = attendanceRepository.findByEmployeeIdAndDate(employeeId, date);
+        
+        if (existingAttendance.isPresent()) {
+            // Update existing attendance instead of throwing error
+            Attendance attendance = existingAttendance.get();
+            attendance.setCheckIn(checkIn);
+            attendance.setCheckOut(checkOut);
+            attendance.setStatus(status != null ? status : Attendance.AttendanceStatus.PRESENT);
+            attendance.setNotes(notes);
+            return toResponse(attendanceRepository.save(attendance));
         }
 
         Attendance attendance = Attendance.builder()
@@ -45,12 +53,38 @@ public class AttendanceService {
         return toResponse(attendanceRepository.save(attendance));
     }
 
+    @PreAuthorize("hasPermission(null, 'employee:update')")
+    public AttendanceResponse updateAttendance(UUID attendanceId,
+                                                LocalTime checkIn, LocalTime checkOut,
+                                                Attendance.AttendanceStatus status,
+                                                String notes) {
+        Attendance attendance = attendanceRepository.findById(attendanceId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.RESOURCE_NOT_FOUND, 
+                        "Attendance not found with id: " + attendanceId));
+        
+        if (checkIn != null) attendance.setCheckIn(checkIn);
+        if (checkOut != null) attendance.setCheckOut(checkOut);
+        if (status != null) attendance.setStatus(status);
+        if (notes != null) attendance.setNotes(notes);
+        
+        return toResponse(attendanceRepository.save(attendance));
+    }
+
     @Transactional(readOnly = true)
     @PreAuthorize("hasPermission(null, 'employee:read')")
     public List<AttendanceResponse> findByEmployeeAndRange(UUID employeeId,
                                                             LocalDate from, LocalDate to) {
         return attendanceRepository.findByEmployeeIdAndDateRange(employeeId, from, to)
                 .stream().map(this::toResponse).collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    @PreAuthorize("hasPermission(null, 'employee:read')")
+    public AttendanceResponse findById(UUID attendanceId) {
+        return attendanceRepository.findById(attendanceId)
+                .map(this::toResponse)
+                .orElseThrow(() -> new BusinessException(ErrorCode.RESOURCE_NOT_FOUND, 
+                        "Attendance not found with id: " + attendanceId));
     }
 
     private AttendanceResponse toResponse(Attendance a) {

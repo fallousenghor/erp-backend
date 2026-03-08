@@ -11,6 +11,8 @@ public interface AttendanceRepository {
 
     Attendance save(Attendance attendance);
 
+    Optional<Attendance> findById(UUID id);
+
     Optional<Attendance> findByEmployeeIdAndDate(UUID employeeId, LocalDate date);
 
     boolean existsByEmployeeIdAndDate(UUID employeeId, LocalDate date);

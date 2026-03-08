@@ -44,7 +44,6 @@ class AssetServiceTest {
         UUID assetId = UUID.randomUUID();
         Asset asset = mock(Asset.class);
         when(asset.getStatus()).thenReturn(AssetStatus.ASSIGNED);
-        when(asset.getId()).thenReturn(assetId);
 
         when(assetRepository.findById(assetId)).thenReturn(Optional.of(asset));
         doThrow(new BusinessException(com.company.erp.shared.exception.ErrorCode.ASSET_ALREADY_ASSIGNED, "Asset is already assigned"))

@@ -8,14 +8,19 @@ import com.company.erp.modules.finance.domain.model.Invoice;
 import com.company.erp.modules.finance.domain.repository.InvoiceRepository;
 import com.company.erp.shared.event.DomainEventPublisher;
 import com.company.erp.shared.exception.ResourceNotFoundException;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -32,6 +37,17 @@ class InvoiceServiceTest {
     @Mock private DomainEventPublisher eventPublisher;
 
     @InjectMocks private InvoiceService invoiceService;
+
+    @BeforeEach
+    void setUpSecurityContext() {
+        var auth = new UsernamePasswordAuthenticationToken("test-user", null, Collections.emptyList());
+        SecurityContextHolder.getContext().setAuthentication(auth);
+    }
+
+    @AfterEach
+    void clearSecurityContext() {
+        SecurityContextHolder.clearContext();
+    }
 
     @Test
     void findById_whenNotFound_throwsResourceNotFoundException() {
