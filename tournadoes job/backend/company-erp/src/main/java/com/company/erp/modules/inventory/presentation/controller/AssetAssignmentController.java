@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/v1/asset-assignments")
+@RequestMapping("/api/v1/asset-assignments")
 @Tag(name = "Asset Assignments", description = "Inventory — Assignment history")
 @SecurityRequirement(name = "bearerAuth")
 @RequiredArgsConstructor

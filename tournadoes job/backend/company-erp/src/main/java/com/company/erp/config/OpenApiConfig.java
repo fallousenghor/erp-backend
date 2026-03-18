@@ -39,7 +39,7 @@ public class OpenApiConfig {
                                 .name("Proprietary")
                                 .url("https://company.com")))
                 .servers(List.of(
-                        new Server().url("/api").description("Default server")
+                        new Server().url("").description("Default server")
                 ));
     }
 }

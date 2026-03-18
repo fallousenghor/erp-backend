@@ -2,6 +2,7 @@ package com.company.erp.modules.finance.presentation.controller;
 
 import com.company.erp.modules.finance.application.dto.request.CreateInvoiceRequest;
 import com.company.erp.modules.finance.application.dto.request.ProcessPaymentRequest;
+import com.company.erp.modules.finance.application.dto.request.UpdateInvoiceRequest;
 import com.company.erp.modules.finance.application.dto.response.FinancialSummaryResponse;
 import com.company.erp.modules.finance.application.dto.response.InvoiceResponse;
 import com.company.erp.modules.finance.application.service.InvoiceService;
@@ -20,7 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/v1/invoices")
+@RequestMapping("/api/v1/invoices")
 @Tag(name = "Invoices", description = "Finance — Invoice management")
 @SecurityRequirement(name = "bearerAuth")
 @RequiredArgsConstructor
@@ -52,6 +53,21 @@ public class InvoiceController {
         return ResponseEntity.ok(ApiResponse.success(
                 invoiceService.findAll(clientName, status,
                         PageRequest.of(page, size, Sort.by("issueDate").descending()))));
+    }
+
+    @PutMapping("/{id}")
+    @Operation(summary = "Update an invoice")
+    public ResponseEntity<ApiResponse<InvoiceResponse>> update(
+            @PathVariable UUID id,
+            @Valid @RequestBody UpdateInvoiceRequest request) {
+        return ResponseEntity.ok(ApiResponse.success(invoiceService.update(id, request)));
+    }
+
+    @DeleteMapping("/{id}")
+    @Operation(summary = "Delete an invoice")
+    public ResponseEntity<ApiResponse<Void>> delete(@PathVariable UUID id) {
+        invoiceService.delete(id);
+        return ResponseEntity.ok(ApiResponse.success(null));
     }
 
     @PostMapping("/{id}/send")

@@ -22,7 +22,7 @@ import java.time.LocalDate;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/v1/departments")
+@RequestMapping("/api/v1/departments")
 @Tag(name = "Departments", description = "Organization structure management")
 @SecurityRequirement(name = "bearerAuth")
 @RequiredArgsConstructor

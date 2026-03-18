@@ -16,6 +16,22 @@ import java.util.UUID;
 @Repository
 public interface DocumentRepository extends JpaRepository<Document, UUID> {
 
+    @Query(value = "SELECT d FROM Document d ORDER BY d.createdAt DESC", 
+           countQuery = "SELECT COUNT(d) FROM Document d")
+    Page<Document> findAllOrderByCreatedAtDesc(Pageable pageable);
+    
+    @Query(value = "SELECT d FROM Document d ORDER BY d.createdAt ASC", 
+           countQuery = "SELECT COUNT(d) FROM Document d")
+    Page<Document> findAllOrderByCreatedAtAsc(Pageable pageable);
+
+    @Query(value = "SELECT d FROM Document d WHERE d.category = :category ORDER BY d.createdAt DESC", 
+           countQuery = "SELECT COUNT(d) FROM Document d WHERE d.category = :category")
+    Page<Document> findByCategoryOrderByCreatedAtDesc(@Param("category") DocumentCategory category, Pageable pageable);
+    
+    @Query(value = "SELECT d FROM Document d WHERE d.status = :status ORDER BY d.createdAt DESC", 
+           countQuery = "SELECT COUNT(d) FROM Document d WHERE d.status = :status")
+    Page<Document> findByStatusOrderByCreatedAtDesc(@Param("status") DocumentStatus status, Pageable pageable);
+
     Page<Document> findAll(Pageable pageable);
 
     Page<Document> findByCategory(DocumentCategory category, Pageable pageable);

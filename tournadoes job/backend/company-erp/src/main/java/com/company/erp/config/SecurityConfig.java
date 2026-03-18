@@ -17,44 +17,30 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.List;
 
-/**
- * Spring Security configuration.
- * - Stateless JWT session
- * - CORS configured
- * - CSRF disabled (JWT-based API)
- * - Method-level security with custom PermissionEvaluator
- */
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity(prePostEnabled = true)
 @RequiredArgsConstructor
 public class SecurityConfig {
 
+    private static final String API_PREFIX = "/api";
+
     private static final String[] PUBLIC_ENDPOINTS = {
-            "/v1/auth/login",
-            "/v1/auth/register",
-            "/v1/auth/refresh",
+            API_PREFIX + "/v1/auth/**",
             "/v3/api-docs/**",
             "/swagger-ui/**",
             "/swagger-ui.html",
-            "/swagger-ui/index.html",
-            "/swagger-ui/index.htm",
-            "/actuator/health",
-            "/webjars/**",
-            "/v3/api-docs.yaml"
+            "/actuator/health"
     };
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
@@ -62,12 +48,13 @@ public class SecurityConfig {
     private final AuthAccessDeniedHandler authAccessDeniedHandler;
     private final UserDetailsService userDetailsService;
     private final CustomPermissionEvaluator customPermissionEvaluator;
+    private final CorsConfigurationSource corsConfigurationSource;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
-                .csrf(AbstractHttpConfigurer::disable)
-                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .csrf(csrf -> csrf.disable())
+                .cors(cors -> cors.configurationSource(corsConfigurationSource))
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .exceptionHandling(ex -> ex
@@ -108,19 +95,5 @@ public class SecurityConfig {
                 new DefaultMethodSecurityExpressionHandler();
         handler.setPermissionEvaluator(customPermissionEvaluator);
         return handler;
-    }
-
-    @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOriginPatterns(List.of("*"));
-        config.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
-        config.setAllowedHeaders(List.of("*"));
-        config.setAllowCredentials(true);
-        config.setMaxAge(3600L);
-
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", config);
-        return source;
     }
 }

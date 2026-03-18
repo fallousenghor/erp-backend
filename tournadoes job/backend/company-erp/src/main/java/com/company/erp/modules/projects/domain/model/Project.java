@@ -34,6 +34,15 @@ public class Project extends BaseAuditEntity {
     @Builder.Default
     private ProjectStatus status = ProjectStatus.PLANNING;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "priority", length = 20)
+    @Builder.Default
+    private ProjectPriority priority = ProjectPriority.MEDIUM;
+
+    @Column(name = "progress")
+    @Builder.Default
+    private Integer progress = 0;
+
     @Column(name = "start_date")
     private LocalDate startDate;
 
@@ -65,6 +74,13 @@ public class Project extends BaseAuditEntity {
         ON_HOLD,
         COMPLETED,
         CANCELLED
+    }
+
+    public enum ProjectPriority {
+        LOW,
+        MEDIUM,
+        HIGH,
+        CRITICAL
     }
 }
 

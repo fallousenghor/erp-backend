@@ -16,7 +16,7 @@ public record DocumentResponse(
     DocumentType type,
     DocumentCategory category,
     DocumentStatus status,
-    int version,
+    Long version,  // Changed from int to Long to match BaseEntity
     boolean signatureRequired,
     String fileUrl,
     String uploadedBy,
@@ -35,7 +35,7 @@ public record DocumentResponse(
             doc.getType(),
             doc.getCategory(),
             doc.getStatus(),
-            1, // Default version for documents without version field
+            doc.getVersion(),  // Version is primitive Long, never null
             doc.isSignatureRequired(),
             doc.getFileUrl(),
             doc.getUploadedBy(),
@@ -43,7 +43,7 @@ public record DocumentResponse(
             doc.getUpdatedAt(),
             doc.getDepartmentId(),
             doc.getEmployeeId(),
-            doc.getSignedBy(),
+(doc.getSignedBy() != null ? List.copyOf(doc.getSignedBy()) : List.of()),
             doc.getExpiresAt()
         );
     }

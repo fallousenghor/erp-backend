@@ -12,6 +12,7 @@ import java.util.UUID;
 
 public interface InvoiceRepository {
     Invoice save(Invoice invoice);
+    void delete(Invoice invoice);
     Optional<Invoice> findById(UUID id);
     Optional<Invoice> findByInvoiceNumber(String invoiceNumber);
     Page<Invoice> findAll(Specification<Invoice> spec, Pageable pageable);

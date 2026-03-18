@@ -21,7 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/v1/assets")
+@RequestMapping("/api/v1/assets")
 @Tag(name = "Assets", description = "Inventory — Asset management")
 @SecurityRequirement(name = "bearerAuth")
 @RequiredArgsConstructor

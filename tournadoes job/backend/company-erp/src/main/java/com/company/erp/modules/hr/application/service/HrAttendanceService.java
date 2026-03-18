@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class AttendanceService {
+public class HrAttendanceService {
 
     private final AttendanceRepository attendanceRepository;
 

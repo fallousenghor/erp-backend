@@ -14,6 +14,14 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@AttributeOverrides({
+    @AttributeOverride(name = "id", column = @Column(name = "id", updatable = false, nullable = false)),
+    @AttributeOverride(name = "createdAt", column = @Column(name = "created_at", nullable = false, updatable = false)),
+    @AttributeOverride(name = "updatedAt", column = @Column(name = "updated_at", nullable = false)),
+    @AttributeOverride(name = "version", column = @Column(name = "version", nullable = false)),
+    @AttributeOverride(name = "createdBy", column = @Column(name = "created_by")),
+    @AttributeOverride(name = "updatedBy", column = @Column(name = "updated_by"))
+})
 public class Document extends BaseAuditEntity {
 
     @Column(nullable = false)
@@ -37,7 +45,7 @@ public class Document extends BaseAuditEntity {
     @Column(nullable = false)
     private boolean signatureRequired;
 
-    @Column(name = "file_url", length = 500)
+    @Column(name = "file_url", length = 10000000)
     private String fileUrl;
 
     @Column(name = "uploaded_by")
@@ -49,7 +57,7 @@ public class Document extends BaseAuditEntity {
     @Column(name = "employee_id")
     private java.util.UUID employeeId;
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "document_signatures", joinColumns = @JoinColumn(name = "document_id"))
     @Column(name = "signed_by")
     @Builder.Default
@@ -85,4 +93,3 @@ public class Document extends BaseAuditEntity {
         EXPIRED
     }
 }
-

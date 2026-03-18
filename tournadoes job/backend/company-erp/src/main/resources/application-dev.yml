@@ -4,24 +4,34 @@
 
 spring:
   datasource:
-    url: jdbc:postgresql://ep-withered-waterfall-ailzv9fq-pooler.c-4.us-east-1.aws.neon.tech:5432/neondb?sslmode=require&channel_binding=require
-    username: neondb_owner
-    password: npg_xCvr8wiYcZ4a
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    hikari:
+      maximum-pool-size: 20
+      minimum-idle: 5
   jpa:
-    show-sql: true
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    open-in-view: false
     properties:
       hibernate:
         format_sql: true
+        generate_statistics: false
   flyway:
-    clean-disabled: false
+    enabled: true
+    baseline-on-migrate: true
 
 logging:
   level:
-    com.company.erp: DEBUG
-    org.hibernate.SQL: DEBUG
-    org.hibernate.type.descriptor.sql: TRACE
-    org.springframework.security: DEBUG
+    root: WARN
+    com.company.erp: INFO
+    org.hibernate.SQL: WARN
+    org.springframework.security: WARN
 
 springdoc:
   swagger-ui:
+    enabled: true
+  api-docs:
     enabled: true

@@ -1,0 +1,35 @@
+# Dependencies
+node_modules
+npm-debug.log*
+
+# Build outputs
+target
+!.mvn/wrapper/maven-wrapper.jar
+
+# IDE
+.idea
+.vscode
+*.swp
+*.swo
+
+# Git
+.git
+.gitignore
+
+# Logs
+logs
+*.log
+
+# Environment files
+.env
+.env.local
+
+# Test
+test
+*.test
+*.spec
+
+# Misc
+.DS_Store
+Thumbs.db
+

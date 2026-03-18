@@ -1,13 +1,42 @@
-version: '3.9'
 
 # ==============================================================================
 # COMPANY ERP — Docker Compose (Development)
 # ==============================================================================
-
 services:
 
   # ============================================================================
-  # ERP Application (connected to Neon Database)
+  # PostgreSQL Database (Local Dev)
+  # ============================================================================
+  postgres:
+    image: postgres:17-alpine
+    container_name: erp-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: erp
+      POSTGRES_USER: erp
+      POSTGRES_PASSWORD: secret
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    networks:
+      - erp-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U erp"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ============================================================================
+  # Neon PostgreSQL (Remote/Prod - Use .env vars)
+  # ============================================================================
+  # For Neon DB, disable local postgres and use .env:
+  # DB_URL=jdbc:postgresql://ep-proud-star-amu3grm8-pooler.c-5.us-east-1.aws.neon.tech:5432/neondb?sslmode=require&channel_binding=require
+  # DB_USERNAME=neondb_owner
+  # DB_PASSWORD=npg_Zma5Y1rjKtcV
+
+  # ============================================================================
+  # ERP Application 
   # ============================================================================
   erp-app:
     build:
@@ -15,15 +44,10 @@ services:
       dockerfile: Dockerfile
     container_name: erp-application
     restart: unless-stopped
+    env_file:
+      - .env
     environment:
       SPRING_PROFILES_ACTIVE: dev
-      DB_URL: jdbc:postgresql://ep-withered-waterfall-ailzv9fq-pooler.c-4.us-east-1.aws.neon.tech:5432/neondb?sslmode=require&channel_binding=require
-      DB_USERNAME: neondb_owner
-      DB_PASSWORD: npg_xCvr8wiYcZ4a
-      JWT_SECRET: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
-      JWT_ACCESS_EXPIRATION: 900000
-      JWT_REFRESH_EXPIRATION: 604800000
-      SERVER_PORT: 8080
     ports:
       - "8080:8080"
     volumes:
@@ -43,6 +67,7 @@ services:
 volumes:
   app_logs:
     driver: local
+  postgres_data:
 
 # ==============================================================================
 # NETWORKS

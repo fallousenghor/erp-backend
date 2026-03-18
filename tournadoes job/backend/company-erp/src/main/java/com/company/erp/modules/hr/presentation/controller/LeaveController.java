@@ -19,7 +19,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/v1/leave-requests")
+@RequestMapping("/api/v1/leave-requests")
 @Tag(name = "Leave Requests", description = "HR — Leave management")
 @SecurityRequirement(name = "bearerAuth")
 @RequiredArgsConstructor

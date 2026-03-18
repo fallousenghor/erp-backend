@@ -46,4 +46,19 @@ public class PageResponse<T> {
                 page.isLast()
         );
     }
+
+    /**
+     * Create an empty PageResponse (for initial load or no results).
+     */
+    public static <T> PageResponse<T> empty() {
+        return new PageResponse<>(
+                List.of(),
+                0,
+                0,
+                0L,
+                0,
+                true,
+                true
+        );
+    }
 }

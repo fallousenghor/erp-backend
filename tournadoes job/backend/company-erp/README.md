@@ -67,12 +67,19 @@ L'API sera disponible sur : http://localhost:8080/api
 ### En local (dev)
 
 ```bash
-# Démarrer PostgreSQL uniquement
+# Démarrer PostgreSQL uniquement (optionnel - Neon DB par défaut)
 docker-compose up -d postgres
 
-# Lancer l'application
-./mvnw spring-boot:run -Dspring-boot.run.profiles=dev
+# Compiler et lancer (corrige l'erreur Maven)
+./mvnw clean spring-boot:run
+
+# Avec profil spécifique
+./mvnw clean spring-boot:run -Dspring.profiles.active=dev
+
+# ❌ Commande incorrecte qui causait l'erreur:
+# mvn run spring:boot  ← PAS ÇA!
 ```
+
 
 ---
 
@@ -146,20 +153,25 @@ com.company.erp
 
 ---
 
+## 🚨 Dépannage rapide
+
+| Erreur | Solution |
+|--------|----------|
+| `No plugin found for prefix 'spring'` | `mvn spring-boot:run` (pas `spring:boot`) |
+| `Flyway: Unable to connect` | Vérifier `DB_URL` ou `docker-compose up postgres` |
+| `Port 8080 already in use` | `killall java` ou changer `SERVER_PORT` |
+
 ## 📋 Variables d'environnement
 
 | Variable | Description | Défaut |
 |----------|-------------|--------|
-| `DB_URL` | URL JDBC PostgreSQL | `jdbc:postgresql://localhost:5432/company_erp` |
-| `DB_USERNAME` | Utilisateur DB | `erp_user` |
+| `DB_URL` | URL JDBC PostgreSQL | Neon DB (application.yml) |
+| `DB_USERNAME` | Utilisateur DB | `neondb_owner` |
 | `DB_PASSWORD` | Mot de passe DB | — |
-| `JWT_SECRET` | Clé secrète JWT (min 256 bits) | — |
-| `JWT_ACCESS_EXPIRATION` | Durée access token (ms) | `900000` |
-| `JWT_REFRESH_EXPIRATION` | Durée refresh token (ms) | `604800000` |
-| `SPRING_PROFILES_ACTIVE` | Profil Spring | `dev` |
-
----
+| `JWT_SECRET` | Clé secrète JWT | — |
+| `CLOUDINARY_*` | Uploads Cloudinary | Configurés |
 
 ## 📜 Licence
 
 Propriétaire — Company Internal Use Only
+

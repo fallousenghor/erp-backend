@@ -24,7 +24,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/v1")
+@RequestMapping("/api/v1")
 @Tag(name = "Performance", description = "HR — Performance management")
 @SecurityRequirement(name = "bearerAuth")
 @RequiredArgsConstructor

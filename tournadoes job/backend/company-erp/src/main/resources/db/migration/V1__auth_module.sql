@@ -1,7 +1,7 @@
 -- V2: Auth module — users, roles, permissions, user_roles, role_permissions, refresh_tokens
 
 -- ─── PERMISSIONS ─────────────────────────────────────────────────────────────
-CREATE TABLE permissions (
+CREATE TABLE IF NOT EXISTS permissions (
     id         UUID        NOT NULL DEFAULT gen_random_uuid(),
     name       VARCHAR(100) NOT NULL,
     description VARCHAR(255),
@@ -13,7 +13,7 @@ CREATE TABLE permissions (
 );
 
 -- ─── ROLES ────────────────────────────────────────────────────────────────────
-CREATE TABLE roles (
+CREATE TABLE IF NOT EXISTS roles (
     id          UUID         NOT NULL DEFAULT gen_random_uuid(),
     name        VARCHAR(50)  NOT NULL,
     description VARCHAR(255),
@@ -25,7 +25,7 @@ CREATE TABLE roles (
 );
 
 -- ─── ROLE_PERMISSIONS ─────────────────────────────────────────────────────────
-CREATE TABLE role_permissions (
+CREATE TABLE IF NOT EXISTS role_permissions (
     role_id       UUID NOT NULL,
     permission_id UUID NOT NULL,
     CONSTRAINT pk_role_permissions PRIMARY KEY (role_id, permission_id),
@@ -34,7 +34,7 @@ CREATE TABLE role_permissions (
 );
 
 -- ─── USERS ────────────────────────────────────────────────────────────────────
-CREATE TABLE users (
+CREATE TABLE IF NOT EXISTS users (
     id              UUID         NOT NULL DEFAULT gen_random_uuid(),
     username        VARCHAR(50)  NOT NULL,
     email           VARCHAR(150) NOT NULL,
@@ -56,11 +56,11 @@ CREATE TABLE users (
     CONSTRAINT uk_user_email     UNIQUE (email)
 );
 
-CREATE INDEX idx_users_username ON users(username);
-CREATE INDEX idx_users_email    ON users(email);
+CREATE INDEX IF NOT EXISTS idx_users_username ON users(username);
+CREATE INDEX IF NOT EXISTS idx_users_email    ON users(email);
 
 -- ─── USER_ROLES ───────────────────────────────────────────────────────────────
-CREATE TABLE user_roles (
+CREATE TABLE IF NOT EXISTS user_roles (
     user_id UUID NOT NULL,
     role_id UUID NOT NULL,
     CONSTRAINT pk_user_roles PRIMARY KEY (user_id, role_id),
@@ -69,7 +69,7 @@ CREATE TABLE user_roles (
 );
 
 -- ─── REFRESH_TOKENS ───────────────────────────────────────────────────────────
-CREATE TABLE refresh_tokens (
+CREATE TABLE IF NOT EXISTS refresh_tokens (
     id         UUID         NOT NULL DEFAULT gen_random_uuid(),
     token      VARCHAR(500) NOT NULL,
     user_id    UUID         NOT NULL,
@@ -84,7 +84,7 @@ CREATE TABLE refresh_tokens (
     CONSTRAINT fk_rt_user        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
-CREATE INDEX idx_refresh_tokens_user ON refresh_tokens(user_id);
+CREATE INDEX IF NOT EXISTS idx_refresh_tokens_user ON refresh_tokens(user_id);
 
 -- ─── SEED DATA — Roles & Permissions ──────────────────────────────────────────
 INSERT INTO roles (id, name, description) VALUES

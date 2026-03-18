@@ -35,9 +35,13 @@ public class DocumentController {
         @RequestParam(required = false) DocumentStatus status,
         @RequestParam(required = false) String search
     ) {
+        // Map frontend sort field to actual entity property
+        // createdAt and updatedAt are in BaseEntity (parent class)
+        String sortField = mapSortField(sortBy);
+        
         Sort sort = sortDir.equalsIgnoreCase("ASC") 
-            ? Sort.by(sortBy).ascending() 
-            : Sort.by(sortBy).descending();
+            ? Sort.by(sortField).ascending() 
+            : Sort.by(sortField).descending();
         Pageable pageable = PageRequest.of(page, size, sort);
 
         Page<DocumentResponse> documents;
@@ -94,6 +98,22 @@ public class DocumentController {
     @GetMapping("/stats/count")
     public ResponseEntity<Long> countByStatus(@RequestParam DocumentStatus status) {
         return ResponseEntity.ok(documentService.countByStatus(status));
+    }
+    
+    /**
+     * Maps frontend sort field names to actual entity property names.
+     * Fields like createdAt and updatedAt are inherited from BaseEntity.
+     */
+    private String mapSortField(String sortBy) {
+        return switch (sortBy) {
+            case "createdAt" -> "createdAt";
+            case "updatedAt" -> "updatedAt";
+            case "name" -> "name";
+            case "type" -> "type";
+            case "category" -> "category";
+            case "status" -> "status";
+            default -> "createdAt";
+        };
     }
 }
 

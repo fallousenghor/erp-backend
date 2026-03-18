@@ -8,7 +8,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,26 +21,22 @@ public class ProjectService {
 
     private final ProjectJpaRepository projectRepository;
 
-    @PreAuthorize("isAuthenticated()")
     @Transactional(readOnly = true)
     public Page<Project> getAllProjects(Pageable pageable) {
         return projectRepository.findByDeletedFalse(pageable);
     }
 
-    @PreAuthorize("isAuthenticated()")
     @Transactional(readOnly = true)
     public Project getProjectById(UUID id) {
         return projectRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(ErrorCode.RESOURCE_NOT_FOUND, id.toString()));
     }
 
-    @PreAuthorize("hasPermission(null, 'project:create')")
     public Project createProject(Project project) {
         project.setStatus(Project.ProjectStatus.PLANNING);
         return projectRepository.save(project);
     }
 
-    @PreAuthorize("hasPermission(null, 'project:update')")
     public Project updateProject(UUID id, Project updatedProject) {
         Project existing = getProjectById(id);
         
@@ -49,6 +44,8 @@ public class ProjectService {
         existing.setDescription(updatedProject.getDescription());
         existing.setClientName(updatedProject.getClientName());
         existing.setStatus(updatedProject.getStatus());
+        existing.setPriority(updatedProject.getPriority());
+        existing.setProgress(updatedProject.getProgress());
         existing.setStartDate(updatedProject.getStartDate());
         existing.setEndDate(updatedProject.getEndDate());
         existing.setBudget(updatedProject.getBudget());
@@ -60,7 +57,6 @@ public class ProjectService {
         return projectRepository.save(existing);
     }
 
-    @PreAuthorize("hasPermission(null, 'project:delete')")
     public void deleteProject(UUID id) {
         Project project = getProjectById(id);
         project.setDeleted(true);

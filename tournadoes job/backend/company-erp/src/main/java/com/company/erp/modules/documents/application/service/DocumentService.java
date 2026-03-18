@@ -20,24 +20,29 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-@Transactional
+@Transactional(readOnly = true)
 public class DocumentService {
 
     private final DocumentRepository documentRepository;
 
     public Page<DocumentResponse> getAllDocuments(Pageable pageable) {
-        return documentRepository.findAll(pageable).map(DocumentResponse::fromEntity);
+        log.info("Fetching all documents, page: {}, size: {}", pageable.getPageNumber(), pageable.getPageSize());
+        return documentRepository.findAllOrderByCreatedAtDesc(pageable)
+            .map(DocumentResponse::fromEntity);
     }
 
     public Page<DocumentResponse> getDocumentsByCategory(DocumentCategory category, Pageable pageable) {
-        return documentRepository.findByCategory(category, pageable).map(DocumentResponse::fromEntity);
+        log.info("Fetching documents by category: {}, page: {}", category, pageable.getPageNumber());
+        return documentRepository.findByCategoryOrderByCreatedAtDesc(category, pageable).map(DocumentResponse::fromEntity);
     }
 
     public Page<DocumentResponse> getDocumentsByStatus(DocumentStatus status, Pageable pageable) {
-        return documentRepository.findByStatus(status, pageable).map(DocumentResponse::fromEntity);
+        log.info("Fetching documents by status: {}, page: {}", status, pageable.getPageNumber());
+        return documentRepository.findByStatusOrderByCreatedAtDesc(status, pageable).map(DocumentResponse::fromEntity);
     }
 
     public Page<DocumentResponse> searchDocuments(DocumentCategory category, DocumentStatus status, String search, Pageable pageable) {
+        log.info("Searching documents category: {}, status: {}, search: {}", category, status, search);
         return documentRepository.searchDocuments(category, status, search, pageable).map(DocumentResponse::fromEntity);
     }
 
@@ -140,4 +145,3 @@ public class DocumentService {
         return documentRepository.countByStatus(status);
     }
 }
-

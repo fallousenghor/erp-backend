@@ -2,6 +2,7 @@ package com.company.erp.modules.finance.application.service;
 
 import com.company.erp.modules.finance.application.dto.request.CreateInvoiceRequest;
 import com.company.erp.modules.finance.application.dto.request.ProcessPaymentRequest;
+import com.company.erp.modules.finance.application.dto.request.UpdateInvoiceRequest;
 import com.company.erp.modules.finance.application.dto.response.FinancialSummaryResponse;
 import com.company.erp.modules.finance.application.dto.response.InvoiceResponse;
 import com.company.erp.modules.finance.application.mapper.InvoiceMapper;
@@ -77,6 +78,56 @@ public class InvoiceService {
 
         log.info("Invoice created: {}", saved.getInvoiceNumber());
         return invoiceMapper.toResponse(saved);
+    }
+
+    @Auditable(action = "UPDATE_INVOICE", entity = "Invoice")
+    @PreAuthorize("hasPermission(null, 'invoice:update')")
+    public InvoiceResponse update(UUID id, UpdateInvoiceRequest request) {
+        Invoice invoice = findOrThrow(id);
+        
+        if (request.clientName() != null) {
+            invoice.setClientName(request.clientName());
+        }
+        if (request.clientEmail() != null) {
+            invoice.setClientEmail(request.clientEmail());
+        }
+        if (request.clientAddress() != null) {
+            invoice.setClientAddress(request.clientAddress());
+        }
+        if (request.issueDate() != null) {
+            invoice.setIssueDate(request.issueDate());
+        }
+        if (request.dueDate() != null) {
+            invoice.setDueDate(request.dueDate());
+        }
+        if (request.currency() != null) {
+            invoice.setCurrency(request.currency());
+        }
+        if (request.notes() != null) {
+            invoice.setNotes(request.notes());
+        }
+        if (request.taxRate() != null) {
+            invoice.setTaxRate(new TaxRate(request.taxRate()));
+        }
+        
+        // Update items if provided
+        if (request.items() != null && !request.items().isEmpty()) {
+            invoice.getItems().clear();
+            request.items().forEach(item ->
+                    invoice.addItem(item.description(), item.quantity(), item.unitPrice()));
+        }
+        
+        Invoice saved = invoiceRepository.save(invoice);
+        log.info("Invoice updated: {}", saved.getInvoiceNumber());
+        return invoiceMapper.toResponse(saved);
+    }
+
+    @Auditable(action = "DELETE_INVOICE", entity = "Invoice")
+    @PreAuthorize("hasPermission(null, 'invoice:delete')")
+    public void delete(UUID id) {
+        Invoice invoice = findOrThrow(id);
+        invoiceRepository.delete(invoice);
+        log.info("Invoice deleted: {}", invoice.getInvoiceNumber());
     }
 
     @Auditable(action = "SEND_INVOICE", entity = "Invoice")

@@ -39,6 +39,27 @@ public class CustomPermissionEvaluator implements PermissionEvaluator {
         "ROLE_HR_MANAGER"
     );
 
+    // Roles that can create/update/delete projects
+    private static final Set<String> PROJECT_MANAGE_ROLES = Set.of(
+        "ROLE_ADMIN",
+        "ROLE_HR_MANAGER",
+        "ROLE_MANAGER",
+        "ROLE_FINANCE",
+        "ROLE_USER",
+        "ROLE_TEACHER"
+    );
+
+    // Roles that can view projects
+    private static final Set<String> PROJECT_VIEW_ROLES = Set.of(
+        "ROLE_ADMIN",
+        "ROLE_HR_MANAGER",
+        "ROLE_MANAGER",
+        "ROLE_EMPLOYEE",
+        "ROLE_FINANCE",
+        "ROLE_USER",
+        "ROLE_TEACHER"
+    );
+
     @Override
     public boolean hasPermission(Authentication authentication,
                                   Object targetDomainObject,
@@ -52,6 +73,19 @@ public class CustomPermissionEvaluator implements PermissionEvaluator {
         
         // Grant access for performance:view based on roles in PERFORMANCE_VIEW_ROLES
         if ("performance:view".equals(permission.toString()) && hasAnyRole(authentication, PERFORMANCE_VIEW_ROLES)) {
+            return true;
+        }
+        
+        // Grant access for project:create, project:update, project:delete based on PROJECT_MANAGE_ROLES
+        if (("project:create".equals(permission.toString()) || 
+             "project:update".equals(permission.toString()) || 
+             "project:delete".equals(permission.toString())) && 
+            hasAnyRole(authentication, PROJECT_MANAGE_ROLES)) {
+            return true;
+        }
+        
+        // Grant access for project:read based on PROJECT_VIEW_ROLES
+        if ("project:read".equals(permission.toString()) && hasAnyRole(authentication, PROJECT_VIEW_ROLES)) {
             return true;
         }
         
@@ -72,6 +106,19 @@ public class CustomPermissionEvaluator implements PermissionEvaluator {
         
         // Grant access for performance:view based on roles in PERFORMANCE_VIEW_ROLES
         if ("performance:view".equals(permission.toString()) && hasAnyRole(authentication, PERFORMANCE_VIEW_ROLES)) {
+            return true;
+        }
+        
+        // Grant access for project:create, project:update, project:delete based on PROJECT_MANAGE_ROLES
+        if (("project:create".equals(permission.toString()) || 
+             "project:update".equals(permission.toString()) || 
+             "project:delete".equals(permission.toString())) && 
+            hasAnyRole(authentication, PROJECT_MANAGE_ROLES)) {
+            return true;
+        }
+        
+        // Grant access for project:read based on PROJECT_VIEW_ROLES
+        if ("project:read".equals(permission.toString()) && hasAnyRole(authentication, PROJECT_VIEW_ROLES)) {
             return true;
         }
         

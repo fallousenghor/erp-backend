@@ -1,7 +1,7 @@
 package com.company.erp.modules.hr.presentation.controller;
 
 import com.company.erp.modules.hr.application.dto.response.AttendanceResponse;
-import com.company.erp.modules.hr.application.service.AttendanceService;
+import com.company.erp.modules.hr.application.service.HrAttendanceService;
 import com.company.erp.modules.hr.domain.model.Attendance;
 import com.company.erp.shared.response.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -17,13 +17,13 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/v1/attendances")
+@RequestMapping("/api/v1/attendances")
 @Tag(name = "Attendance", description = "HR — Attendance tracking")
 @SecurityRequirement(name = "bearerAuth")
 @RequiredArgsConstructor
 public class AttendanceController {
 
-    private final AttendanceService attendanceService;
+    private final HrAttendanceService attendanceService;
 
     @PostMapping
     public ResponseEntity<ApiResponse<AttendanceResponse>> record(

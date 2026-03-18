@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/v1/programs")
+@RequestMapping("/api/v1/programs")
 @Tag(name = "Training Programs", description = "Education — Program management")
 @SecurityRequirement(name = "bearerAuth")
 @RequiredArgsConstructor
@@ -32,6 +32,13 @@ public class TrainingProgramController {
             @Valid @RequestBody CreateProgramRequest request) {
         return ResponseEntity.status(201)
                 .body(ApiResponse.created(programService.create(request)));
+    }
+
+    @GetMapping("/stats")
+    @Operation(summary = "Get training program statistics")
+    public ResponseEntity<ApiResponse<?>> getStats() {
+        // TODO: Implement program statistics
+        return ResponseEntity.ok(ApiResponse.success(java.util.Collections.emptyList()));
     }
 
     @GetMapping("/{id}")

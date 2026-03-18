@@ -1,184 +1,81 @@
-# ==============================================================================
-# COMPANY ERP — APPLICATION CONFIGURATION
-# ==============================================================================
+server:
+  port: ${SERVER_PORT:8080}
+  servlet:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+  error:
+    include-message: always
+    include-binding-errors: always
 
 spring:
   application:
     name: company-erp
-
   profiles:
     active: ${SPRING_PROFILES_ACTIVE:dev}
-
-  # ============================================================================
-  # DATASOURCE
-  # ============================================================================
   datasource:
-    url: ${DB_URL:jdbc:postgresql://ep-withered-waterfall-ailzv9fq-pooler.c-4.us-east-1.aws.neon.tech:5432/neondb?sslmode=require&channel_binding=require}
-    username: ${DB_USERNAME:neondb_owner}
-    password: ${DB_PASSWORD:npg_xCvr8wiYcZ4a}
-    driver-class-name: org.postgresql.Driver
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
     hikari:
-      pool-name: ErpHikariPool
-      maximum-pool-size: ${DB_POOL_SIZE:20}
+      maximum-pool-size: 20
       minimum-idle: 5
-      idle-timeout: 300000
-      connection-timeout: 20000
-      max-lifetime: 1200000
-      connection-test-query: SELECT 1
-
-  # ============================================================================
-  # JPA / HIBERNATE
-  # ============================================================================
   jpa:
     hibernate:
-      ddl-auto: none
+      ddl-auto: validate
     show-sql: false
     open-in-view: false
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
-        use_sql_comments: false
         jdbc:
-          batch_size: 50
-          fetch_size: 50
-        order_inserts: true
-        order_updates: true
-        generate_statistics: false
-        default_schema: public
-
-  # ============================================================================
-  # FLYWAY — DATABASE MIGRATIONS
-  # ============================================================================
+          lob:
+            non_contextual_creation: true
   flyway:
     enabled: true
     baseline-on-migrate: true
-    baseline-version: 0
-    locations: classpath:db/migration
-    validate-on-migrate: false
-    out-of-order: false
 
-  # ============================================================================
-  # CACHE
-  # ============================================================================
-  cache:
-    type: simple
-
-  # ============================================================================
-  # JACKSON
-  # ============================================================================
-  jackson:
-    serialization:
-      write-dates-as-timestamps: false
-      fail-on-empty-beans: false
-    deserialization:
-      fail-on-unknown-properties: false
-    default-property-inclusion: non_null
-    time-zone: UTC
-
-  # ============================================================================
-  # SERVLET MULTIPART
-  # ============================================================================
-  servlet:
-    multipart:
-      enabled: true
-      max-file-size: 10MB
-      max-request-size: 10MB
-
-# ==============================================================================
-# SERVER
-# ==============================================================================
-server:
-  port: ${SERVER_PORT:8080}
-  servlet:
-    context-path: /api
-  compression:
-    enabled: true
-    mime-types: application/json,application/xml,text/html,text/plain
-    min-response-size: 1024
-  error:
-    include-message: always
-    include-binding-errors: always
-    include-stacktrace: never
-    include-exception: false
-
-# ==============================================================================
-# SECURITY — JWT
-# ==============================================================================
 app:
   security:
     jwt:
-      secret-key: ${JWT_SECRET:404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970}
-      access-token-expiration: ${JWT_ACCESS_EXPIRATION:900000}
-      refresh-token-expiration: ${JWT_REFRESH_EXPIRATION:604800000}
-    allowed-origins:
-      - ${CORS_ORIGINS:http://localhost:3000}
-    account-lock:
-      max-failed-attempts: 5
-      lock-duration-minutes: 30
+      secretKey: ${JWT_SECRET}
+      access:
+        expiration: ${JWT_ACCESS_EXPIRATION:900000} # 15min
+      refresh:
+        expiration: ${JWT_REFRESH_EXPIRATION:604800000} # 7 days
 
-# ==============================================================================
-# SPRINGDOC OPENAPI
-# ==============================================================================
-springdoc:
-  api-docs:
-    path: /v3/api-docs
-    enabled: true
-  swagger-ui:
-    path: /swagger-ui.html
-    enabled: true
-    try-it-out-enabled: true
-    operations-sorter: alpha
-    tags-sorter: alpha
-    redirectEnabled: true
-  show-actuator: false
+cloudinary:
+  cloud-name: ${CLOUDINARY_CLOUD_NAME}
+  api-key: ${CLOUDINARY_API_KEY}
+  api-secret: ${CLOUDINARY_API_SECRET}
 
-# ==============================================================================
-# ACTUATOR
-# ==============================================================================
+logging:
+  pattern:
+    level: '%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]'
+  level:
+    com.company.erp: DEBUG
+    org.springframework.security: WARN
+    org.hibernate.SQL: WARN
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+
 management:
   endpoints:
     web:
       exposure:
-        include: health,info,metrics
-      base-path: /actuator
-  endpoint:
-    health:
-      show-details: when-authorized
-  info:
-    env:
-      enabled: true
+        include:
+          - health
+          - info
+          - metrics
+          - prometheus
+          - audit-logs
+      show-details: always
 
-info:
-  app:
-    name: Company ERP
-    version: 1.0.0
-    description: Enterprise Resource Planning System
+resilience4j:
+  ratelimiter:
+    instances:
+      login:
+        limit-for-period: 100
+        limit-refresh-period: 1m
+        timeout-duration: 1s
 
-# ==============================================================================
-# CLOUDINARY
-# ==============================================================================
-cloudinary:
-  cloud-name: ${CLOUDINARY_CLOUD_NAME:dvr66cxgj}
-  api-key: ${CLOUDINARY_API_KEY:619627233966842}
-  api-secret: ${CLOUDINARY_API_SECRET:EJNG5Bz89WIQSJRUzm-H_sHqqe8}
-  upload-folder: erp-uploads
-
-# ==============================================================================
-# LOGGING
-# ==============================================================================
-logging:
-  level:
-    root: INFO
-    com.company.erp: DEBUG
-    org.springframework.security: INFO
-    org.hibernate.SQL: WARN
-    org.hibernate.type.descriptor.sql: WARN
-    org.flywaydb: INFO
-  pattern:
-    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
-    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
-  file:
-    name: logs/erp.log
-    max-size: 50MB
-    max-history: 30
