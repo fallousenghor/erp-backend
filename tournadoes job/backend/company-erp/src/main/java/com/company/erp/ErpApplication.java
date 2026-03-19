@@ -14,6 +14,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * - CacheConfig     → @EnableCaching
  * - AsyncConfig     → @EnableAsync + ThreadPoolTaskExecutor
  */
+
 @SpringBootApplication
 public class ErpApplication {
 

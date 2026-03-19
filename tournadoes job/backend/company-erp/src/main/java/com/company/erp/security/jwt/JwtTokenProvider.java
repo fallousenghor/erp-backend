@@ -89,7 +89,21 @@ public class JwtTokenProvider {
     // ── Key ─────────────────────────────────────────────────────────────────
 
     private Key getSigningKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(jwtProperties.getSecretKey());
+        String secret = jwtProperties.getSecretKey();
+        if (secret == null || secret.isBlank()) {
+            throw new IllegalStateException("JWT secret key is not configured. Please set JWT_SECRET in .env file.");
+        }
+        
+        byte[] keyBytes;
+        try {
+            // Try Base64 decode first
+            keyBytes = Decoders.BASE64.decode(secret);
+        } catch (IllegalArgumentException e) {
+            // If not valid Base64, use the string directly as bytes (legacy support)
+            log.warn("JWT secret is not Base64 encoded. Using as plain text (not recommended for production).");
+            keyBytes = secret.getBytes();
+        }
+        
         return Keys.hmacShaKeyFor(keyBytes);
     }
 }

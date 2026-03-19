@@ -21,6 +21,10 @@ spring:
     hikari:
       maximum-pool-size: 20
       minimum-idle: 5
+      keepalive-time: 30000
+      connection-timeout: 20000
+      idle-timeout: 600000
+      max-lifetime: 1800000
   jpa:
     hibernate:
       ddl-auto: validate
@@ -33,13 +37,14 @@ spring:
           lob:
             non_contextual_creation: true
   flyway:
-    enabled: true
+    enabled: false
     baseline-on-migrate: true
 
 app:
   security:
     jwt:
-      secretKey: ${JWT_SECRET}
+      secret-key: ${JWT_SECRET}
+
       access:
         expiration: ${JWT_ACCESS_EXPIRATION:900000} # 15min
       refresh:
