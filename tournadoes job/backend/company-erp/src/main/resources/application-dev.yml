@@ -22,6 +22,13 @@ spring:
   flyway:
     enabled: true
     baseline-on-migrate: true
+    validate-on-migrate: false
+
+cloudinary:
+  cloud_name: ${CLOUDINARY_CLOUD_NAME}
+  api_key: ${CLOUDINARY_API_KEY}
+  api_secret: ${CLOUDINARY_API_SECRET}
+  upload_folder: erp
 
 logging:
   level:
@@ -35,3 +42,4 @@ springdoc:
     enabled: true
   api-docs:
     enabled: true
+

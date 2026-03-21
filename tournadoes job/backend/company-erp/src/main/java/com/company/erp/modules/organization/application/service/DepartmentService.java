@@ -14,6 +14,8 @@ import com.company.erp.shared.audit.Auditable;
 import com.company.erp.shared.event.DomainEventPublisher;
 import com.company.erp.shared.exception.BusinessException;
 import com.company.erp.shared.exception.ErrorCode;
+import com.company.erp.modules.hr.domain.repository.EmployeeRepository;
+import com.company.erp.modules.organization.domain.repository.PositionRepository;
 import com.company.erp.shared.exception.ResourceNotFoundException;
 import com.company.erp.shared.response.PageResponse;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +34,8 @@ import java.util.UUID;
 public class DepartmentService {
 
     private final DepartmentRepository departmentRepository;
+    private final com.company.erp.modules.hr.domain.repository.EmployeeRepository employeeRepository;
+    private final PositionRepository positionRepository;
     private final DepartmentMapper departmentMapper;
     private final DomainEventPublisher eventPublisher;
 
@@ -79,10 +83,22 @@ public class DepartmentService {
         return departmentMapper.toResponse(department);
     }
 
-    @Auditable(action = "DELETE_DEPARTMENT", entity = "Department")
+@Auditable(action = "DELETE_DEPARTMENT", entity = "Department")
     @PreAuthorize("hasPermission(null, 'department:delete')")
     public void delete(DeleteDepartmentCommand command) {
         Department department = findOrThrow(command.id());
+        
+        // Check dependencies before deletion
+        long employeeCount = employeeRepository.countByDepartmentId(command.id());
+        long positionCount = positionRepository.findByDepartmentId(command.id()).size();
+        long assetCount = 0; // No countByDepartmentId method
+        
+        if (employeeCount > 0 || positionCount > 0) {
+            throw new BusinessException(ErrorCode.CONFLICT,
+                String.format("Cannot delete department. Dependencies: Employees=%d, Positions=%d", 
+                    employeeCount, positionCount));
+        }
+        
         department.softDelete();
         departmentRepository.save(department);
         log.info("Department soft-deleted: {}", command.id());

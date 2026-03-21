@@ -26,7 +26,7 @@ public class DepartmentRepositoryImpl implements DepartmentRepository {
 
     @Override
     public Optional<Department> findById(UUID id) {
-        return jpaRepository.findByIdWithDetails(id);
+return jpaRepository.findById(id);
     }
 
     @Override

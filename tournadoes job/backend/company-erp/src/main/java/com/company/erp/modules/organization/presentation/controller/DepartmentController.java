@@ -3,6 +3,8 @@ package com.company.erp.modules.organization.presentation.controller;
 import com.company.erp.modules.organization.application.command.*;
 import com.company.erp.modules.organization.application.dto.request.CreateDepartmentRequest;
 import com.company.erp.modules.organization.application.dto.request.UpdateDepartmentRequest;
+import com.company.erp.shared.exception.BusinessException;
+import com.company.erp.shared.exception.ErrorCode;
 import com.company.erp.modules.organization.application.dto.response.DepartmentResponse;
 import com.company.erp.modules.organization.application.query.GetDepartmentsQuery;
 import com.company.erp.modules.organization.application.service.DepartmentService;
@@ -61,13 +63,17 @@ public class DepartmentController {
         return ResponseEntity.ok(ApiResponse.success(departmentService.findAll(query)));
     }
 
-    @PutMapping("/{id}")
+@PutMapping("/{id}")
     @Operation(summary = "Update department")
     public ResponseEntity<ApiResponse<DepartmentResponse>> update(
             @PathVariable UUID id,
             @Valid @RequestBody UpdateDepartmentRequest request) {
+        // Ensure name is provided for update
+        if (request.name() == null || request.name().trim().isBlank()) {
+            throw new BusinessException(ErrorCode.VALIDATION_ERROR, "Department name is required");
+        }
         UpdateDepartmentCommand command = new UpdateDepartmentCommand(
-                id, request.name(), request.description(), request.active());
+                id, request.name().trim(), request.description(), request.active());
         return ResponseEntity.ok(ApiResponse.success(departmentService.update(command)));
     }
 

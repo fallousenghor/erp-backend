@@ -46,13 +46,13 @@ public class AssetController {
         // Upload image to Cloudinary if provided
         String imageUrl = null;
         if (request.image() != null && !request.image().isEmpty()) {
-            imageUrl = imageUploadService.uploadImage(request.image(), "assets");
+            imageUrl = imageUploadService.uploadImage(request.image(), "inventory/assets/images/ASSET_" + System.currentTimeMillis());
         }
         
         // Upload document to Cloudinary if provided
         String documentUrl = null;
         if (request.document() != null && !request.document().isEmpty()) {
-            documentUrl = imageUploadService.uploadDocument(request.document(), "assets");
+            documentUrl = imageUploadService.uploadDocument(request.document(), "inventory/assets/documents/DOC_" + System.currentTimeMillis());
         }
         
         return ResponseEntity.status(201)
@@ -108,12 +108,12 @@ public class AssetController {
         
         String imageUrl = null;
         if (image != null && !image.isEmpty()) {
-            imageUrl = imageUploadService.uploadImage(image, "assets");
+            imageUrl = imageUploadService.uploadImage(image, "inventory/assets/images/ASSET_" + System.currentTimeMillis());
         }
         
         String documentUrl = null;
         if (document != null && !document.isEmpty()) {
-            documentUrl = imageUploadService.uploadDocument(document, "assets");
+            documentUrl = imageUploadService.uploadDocument(document, "inventory/assets/documents/DOC_" + System.currentTimeMillis());
         }
         
         return ResponseEntity.ok(ApiResponse.success(assetService.updateMedia(id, imageUrl, documentUrl)));

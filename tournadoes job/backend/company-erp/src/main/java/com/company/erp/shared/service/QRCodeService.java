@@ -53,7 +53,7 @@ public class QRCodeService {
             // Upload to Cloudinary
             String qrCodeUrl = imageUploadService.uploadQRCode(
                 qrCodeImage, 
-                "employees/qr/" + employeeNumber
+                employeeNumber
             );
 
             log.info("QR code generated and uploaded for employee: {}", employeeNumber);

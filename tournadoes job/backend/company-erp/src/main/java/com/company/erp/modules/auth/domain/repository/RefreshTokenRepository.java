@@ -7,6 +7,9 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface RefreshTokenRepository {
+    
+    boolean existsByToken(String token);
+
 
     RefreshToken save(RefreshToken refreshToken);
 

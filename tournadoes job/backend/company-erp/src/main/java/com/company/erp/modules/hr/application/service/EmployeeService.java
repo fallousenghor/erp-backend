@@ -100,7 +100,9 @@ public class EmployeeService {
                 request.lastName(),
                 request.email().toLowerCase()
         );
-        employee.setQrCodeUrl(qrCodeUrl);
+        if (qrCodeUrl != null) {
+            employee.setQrCodeUrl(qrCodeUrl);
+        }
 
         employee = employeeRepository.save(employee);
         eventPublisher.publish(new EmployeeCreatedEvent(

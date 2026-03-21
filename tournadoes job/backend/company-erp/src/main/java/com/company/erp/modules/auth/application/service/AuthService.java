@@ -181,7 +181,20 @@ public class AuthService {
     }
 
     private String generateAndSaveRefreshToken(User user, UserDetailsImpl userDetails) {
-        String rawToken = jwtTokenProvider.generateRefreshToken(userDetails);
+        String rawToken;
+        RefreshToken existingToken;
+        
+        do {
+            rawToken = jwtTokenProvider.generateRefreshToken(userDetails);
+            existingToken = refreshTokenRepository.findByToken(rawToken).orElse(null);
+            if (existingToken != null) {
+                // Rare collision - revoke existing token
+                log.warn("Refresh token collision detected for user {}. Revoking existing token.", user.getUsername());
+                existingToken.revoke();
+                refreshTokenRepository.save(existingToken);
+            }
+        } while (existingToken != null); // Retry until unique token generated
+        
         RefreshToken refreshToken = RefreshToken.builder()
                 .token(rawToken)
                 .user(user)

@@ -15,6 +15,11 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class RefreshTokenRepositoryImpl implements RefreshTokenRepository {
 
+@Override
+    public boolean existsByToken(String token) {
+        return jpaRepository.existsByToken(token);
+    }
+
     private final RefreshTokenJpaRepository jpaRepository;
 
     @Override
