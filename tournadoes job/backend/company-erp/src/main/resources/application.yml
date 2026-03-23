@@ -37,8 +37,9 @@ spring:
           lob:
             non_contextual_creation: true
   flyway:
-    enabled: false
+    enabled: true
     baseline-on-migrate: true
+    locations: classpath:db/migration
 
 app:
   security:

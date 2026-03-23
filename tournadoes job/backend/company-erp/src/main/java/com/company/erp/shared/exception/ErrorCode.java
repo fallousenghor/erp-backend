@@ -1,77 +1,81 @@
 package com.company.erp.shared.exception;
 
-import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
-/**
- * Centralized error codes for the entire application.
- * Each code carries an HTTP status and a human-readable message.
- */
-@Getter
 public enum ErrorCode {
-
-    // ── Generic ────────────────────────────────────────────────────────────
-    INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "An unexpected error occurred"),
-    VALIDATION_ERROR(HttpStatus.BAD_REQUEST, "Validation failed"),
-    RESOURCE_NOT_FOUND(HttpStatus.NOT_FOUND, "Resource not found"),
-    ACCESS_DENIED(HttpStatus.FORBIDDEN, "Access denied"),
-    UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "Authentication required"),
-    CONFLICT(HttpStatus.CONFLICT, "Resource already exists"),
-    BAD_REQUEST(HttpStatus.BAD_REQUEST, "Bad request"),
-
-    // ── Auth ───────────────────────────────────────────────────────────────
-    INVALID_CREDENTIALS(HttpStatus.UNAUTHORIZED, "Invalid username or password"),
-    ACCOUNT_LOCKED(HttpStatus.LOCKED, "Account is locked due to too many failed attempts"),
-    ACCOUNT_DISABLED(HttpStatus.FORBIDDEN, "Account is disabled"),
-    TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, "Token has expired"),
-    TOKEN_INVALID(HttpStatus.UNAUTHORIZED, "Token is invalid"),
-    REFRESH_TOKEN_NOT_FOUND(HttpStatus.UNAUTHORIZED, "Refresh token not found"),
-    REFRESH_TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, "Refresh token has expired"),
-    USER_NOT_FOUND(HttpStatus.NOT_FOUND, "User not found"),
-    USER_ALREADY_EXISTS(HttpStatus.CONFLICT, "User already exists"),
-    ROLE_NOT_FOUND(HttpStatus.NOT_FOUND, "Role not found"),
-
-    // ── Organization ───────────────────────────────────────────────────────
-    DEPARTMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "Department not found"),
-    DEPARTMENT_CODE_ALREADY_EXISTS(HttpStatus.CONFLICT, "Department code already exists"),
-    POSITION_NOT_FOUND(HttpStatus.NOT_FOUND, "Position not found"),
-
-    // ── HR ─────────────────────────────────────────────────────────────────
-    EMPLOYEE_NOT_FOUND(HttpStatus.NOT_FOUND, "Employee not found"),
-    EMPLOYEE_ALREADY_TERMINATED(HttpStatus.CONFLICT, "Employee is already terminated"),
-    LEAVE_REQUEST_NOT_FOUND(HttpStatus.NOT_FOUND, "Leave request not found"),
-    LEAVE_REQUEST_ALREADY_PROCESSED(HttpStatus.CONFLICT, "Leave request has already been processed"),
-    INSUFFICIENT_LEAVE_BALANCE(HttpStatus.BAD_REQUEST, "Insufficient leave balance"),
-    ATTENDANCE_ALREADY_RECORDED(HttpStatus.CONFLICT, "Attendance already recorded for this date"),
-
-    // ── Finance ────────────────────────────────────────────────────────────
-    INVOICE_NOT_FOUND(HttpStatus.NOT_FOUND, "Invoice not found"),
-    INVOICE_ALREADY_PAID(HttpStatus.CONFLICT, "Invoice is already paid"),
-    INVOICE_ALREADY_CANCELLED(HttpStatus.CONFLICT, "Invoice is already cancelled"),
-    INVOICE_INVALID_TRANSITION(HttpStatus.BAD_REQUEST, "Invalid invoice status transition"),
-    PAYMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "Payment not found"),
-    EXPENSE_NOT_FOUND(HttpStatus.NOT_FOUND, "Expense not found"),
-
-    // ── Inventory ──────────────────────────────────────────────────────────
-    ASSET_NOT_FOUND(HttpStatus.NOT_FOUND, "Asset not found"),
-    ASSET_ALREADY_ASSIGNED(HttpStatus.CONFLICT, "Asset is already assigned"),
-    ASSET_NOT_ASSIGNED(HttpStatus.BAD_REQUEST, "Asset is not currently assigned"),
-    ASSET_CODE_ALREADY_EXISTS(HttpStatus.CONFLICT, "Asset code already exists"),
-
-    // ── Education ──────────────────────────────────────────────────────────
-    PROGRAM_NOT_FOUND(HttpStatus.NOT_FOUND, "Training program not found"),
-    STUDENT_NOT_FOUND(HttpStatus.NOT_FOUND, "Student not found"),
-    STUDENT_CODE_ALREADY_EXISTS(HttpStatus.CONFLICT, "Student code already exists"),
-    TEACHER_NOT_FOUND(HttpStatus.NOT_FOUND, "Teacher not found"),
-    ENROLLMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "Enrollment not found"),
-    STUDENT_ALREADY_ENROLLED(HttpStatus.CONFLICT, "Student is already enrolled in this program"),
-    ENROLLMENT_ALREADY_COMPLETED(HttpStatus.CONFLICT, "Enrollment is already completed");
-
-    private final HttpStatus httpStatus;
+    // Common errors
+    EMPLOYEE_NOT_FOUND("EMPLOYEE_NOT_FOUND", "Employee not found", HttpStatus.NOT_FOUND),
+    LEAVE_NOT_FOUND("LEAVE_NOT_FOUND", "Leave request not found", HttpStatus.NOT_FOUND),
+    ATTENDANCE_NOT_FOUND("ATTENDANCE_NOT_FOUND", "Attendance record not found", HttpStatus.NOT_FOUND),
+    VALIDATION_ERROR("VALIDATION_ERROR", "Validation error", HttpStatus.BAD_REQUEST),
+    BAD_REQUEST("BAD_REQUEST", "Bad request", HttpStatus.BAD_REQUEST),
+    ACCESS_DENIED("ACCESS_DENIED", "Access denied", HttpStatus.FORBIDDEN),
+    CONFLICT("CONFLICT", "Resource conflict", HttpStatus.CONFLICT),
+    RESOURCE_NOT_FOUND("RESOURCE_NOT_FOUND", "Resource not found", HttpStatus.NOT_FOUND),
+    
+    // Authentication & Authorization
+    INVALID_CREDENTIALS("INVALID_CREDENTIALS", "Invalid username or password", HttpStatus.UNAUTHORIZED),
+    ACCOUNT_LOCKED("ACCOUNT_LOCKED", "Account is locked", HttpStatus.LOCKED),
+    USER_NOT_FOUND("USER_NOT_FOUND", "User not found", HttpStatus.NOT_FOUND),
+    
+    // HR Module
+    DEPARTMENT_NOT_FOUND("DEPARTMENT_NOT_FOUND", "Department not found", HttpStatus.NOT_FOUND),
+    DEPARTMENT_CODE_ALREADY_EXISTS("DEPARTMENT_CODE_ALREADY_EXISTS", "Department code already exists", HttpStatus.CONFLICT),
+    POSITION_NOT_FOUND("POSITION_NOT_FOUND", "Position not found", HttpStatus.NOT_FOUND),
+    
+    // Education Module
+    TEACHER_NOT_FOUND("TEACHER_NOT_FOUND", "Teacher not found", HttpStatus.NOT_FOUND),
+    STUDENT_NOT_FOUND("STUDENT_NOT_FOUND", "Student not found", HttpStatus.NOT_FOUND),
+    STUDENT_ALREADY_ENROLLED("STUDENT_ALREADY_ENROLLED", "Student already enrolled", HttpStatus.CONFLICT),
+    
+    // Finance Module
+    PAYMENT_NOT_FOUND("PAYMENT_NOT_FOUND", "Payment not found", HttpStatus.NOT_FOUND),
+    INVOICE_NOT_FOUND("INVOICE_NOT_FOUND", "Invoice not found", HttpStatus.NOT_FOUND),
+    INVOICE_INVALID_TRANSITION("INVOICE_INVALID_TRANSITION", "Invalid invoice status transition", HttpStatus.BAD_REQUEST),
+    EXPENSE_NOT_FOUND("EXPENSE_NOT_FOUND", "Expense not found", HttpStatus.NOT_FOUND),
+    
+    // Inventory Module
+    ASSET_ALREADY_ASSIGNED("ASSET_ALREADY_ASSIGNED", "Asset already assigned", HttpStatus.CONFLICT),
+    ASSET_NOT_FOUND("ASSET_NOT_FOUND", "Asset not found", HttpStatus.NOT_FOUND),
+    ASSET_NOT_ASSIGNED("ASSET_NOT_ASSIGNED", "Asset not assigned", HttpStatus.BAD_REQUEST),
+    
+    // Education Module
+    PROGRAM_NOT_FOUND("PROGRAM_NOT_FOUND", "Training program not found", HttpStatus.NOT_FOUND),
+    ENROLLMENT_ALREADY_COMPLETED("ENROLLMENT_ALREADY_COMPLETED", "Enrollment already completed", HttpStatus.CONFLICT),
+    
+    // HR Module
+    EMPLOYEE_ALREADY_TERMINATED("EMPLOYEE_ALREADY_TERMINATED", "Employee already terminated", HttpStatus.CONFLICT),
+    INSUFFICIENT_LEAVE_BALANCE("INSUFFICIENT_LEAVE_BALANCE", "Insufficient leave balance", HttpStatus.BAD_REQUEST),
+    
+    // Auth Module
+    USER_ALREADY_EXISTS("USER_ALREADY_EXISTS", "User already exists", HttpStatus.CONFLICT),
+    ROLE_NOT_FOUND("ROLE_NOT_FOUND", "Role not found", HttpStatus.NOT_FOUND),
+    REFRESH_TOKEN_NOT_FOUND("REFRESH_TOKEN_NOT_FOUND", "Refresh token not found", HttpStatus.NOT_FOUND),
+    REFRESH_TOKEN_EXPIRED("REFRESH_TOKEN_EXPIRED", "Refresh token expired", HttpStatus.UNAUTHORIZED),
+    TOKEN_INVALID("TOKEN_INVALID", "Invalid token", HttpStatus.UNAUTHORIZED),
+    
+    // Education Module
+    ENROLLMENT_NOT_FOUND("ENROLLMENT_NOT_FOUND", "Enrollment not found", HttpStatus.NOT_FOUND);
+    
+    private final String code;
     private final String message;
-
-    ErrorCode(HttpStatus httpStatus, String message) {
-        this.httpStatus = httpStatus;
+    private final HttpStatus httpStatus;
+    
+    ErrorCode(String code, String message, HttpStatus httpStatus) {
+        this.code = code;
         this.message = message;
+        this.httpStatus = httpStatus;
+    }
+    
+    public String getCode() {
+        return code;
+    }
+    
+    public String getMessage() {
+        return message;
+    }
+    
+    public HttpStatus getHttpStatus() {
+        return httpStatus;
     }
 }

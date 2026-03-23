@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-@Repository
+@Repository("hrAttendanceJpaRepository")
 public interface AttendanceJpaRepository extends JpaRepository<Attendance, UUID> {
 
     Optional<Attendance> findByEmployeeIdAndAttendanceDate(UUID employeeId, LocalDate date);

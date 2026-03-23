@@ -34,8 +34,12 @@ logging:
   level:
     root: WARN
     com.company.erp: INFO
-    org.hibernate.SQL: WARN
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+    com.company.erp.modules.auth: DEBUG
+    org.springframework.security.authentication: DEBUG
     org.springframework.security: WARN
+    org.springframework.jcl: ERROR
 
 springdoc:
   swagger-ui:

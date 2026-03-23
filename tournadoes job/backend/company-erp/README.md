@@ -161,6 +161,29 @@ com.company.erp
 | `Flyway: Unable to connect` | Vérifier `DB_URL` ou `docker-compose up postgres` |
 | `Port 8080 already in use` | `killall java` ou changer `SERVER_PORT` |
 
+## 🔐 Test Users (Development Credentials)
+
+| Username | Password | Roles |
+|----------|----------|-------|
+| `admin` | `Admin@123` | ROLE_ADMIN (full access) |
+| `hrmanager` | `Test123!` | ROLE_HR_MANAGER |
+| `finance` | `Test123!` | ROLE_FINANCE |
+| `teacher` | `Test123!` | ROLE_TEACHER |
+| `manager` | `Test123!` | ROLE_MANAGER |
+
+**Note**: Passwords per V29 migration. Run `./mvnw spring-boot:run` to apply V26-V29 migrations if needed.
+
+**API Login**: `POST /api/auth/login`
+
+```bash
+curl -X POST http://localhost:8080/api/v1/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"username":"admin","password":"Admin@123"}'  # or "Test123!" for others
+```
+  -H "Content-Type: application/json" \
+  -d '{"username":"admin","password":"Admin@123"}'
+```
+
 ## 📋 Variables d'environnement
 
 | Variable | Description | Défaut |

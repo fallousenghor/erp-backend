@@ -1,6 +1,7 @@
 package com.company.erp.modules.hr.presentation.controller;
 
 import com.company.erp.modules.hr.application.dto.request.CreateEmployeeRequest;
+import com.company.erp.modules.hr.application.dto.request.TerminateEmployeeRequest;
 import com.company.erp.modules.hr.application.dto.request.UpdateEmployeeRequest;
 import com.company.erp.modules.hr.application.dto.response.EmployeeResponse;
 import com.company.erp.modules.hr.application.service.EmployeeService;
@@ -124,7 +125,7 @@ public class EmployeeController {
         return ResponseEntity.ok(response);
     }
 
-    @PreAuthorize("hasPermission(null, 'employee:update')")
+@PreAuthorize("hasPermission(null, 'employee:update')")
     @PutMapping("/{id}/photo")
     public ResponseEntity<EmployeeResponse> updateEmployeePhoto(
             @PathVariable UUID id,
@@ -139,5 +140,24 @@ public class EmployeeController {
             log.error("Error updating employee photo", e);
             throw new RuntimeException("Failed to update photo: " + e.getMessage(), e);
         }
+    }
+
+    @PreAuthorize("hasPermission(null, 'employee:update')")
+    @PostMapping("/{id}/terminate")
+    public ResponseEntity<EmployeeResponse> terminateEmployee(
+            @PathVariable UUID id,
+            @Valid @RequestBody TerminateEmployeeRequest request) {
+        EmployeeResponse response = employeeService.terminate(id, request.terminationDate());
+        log.info("Employee terminated: id={} date={} reason={}", 
+                id, request.terminationDate(), request.reason());
+        return ResponseEntity.ok(response);
+    }
+
+    @PreAuthorize("hasPermission(null, 'employee:delete')")
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteEmployee(@PathVariable UUID id) {
+        employeeService.delete(id);
+        log.info("Employee hard deleted: {}", id);
+        return ResponseEntity.noContent().build();
     }
 }

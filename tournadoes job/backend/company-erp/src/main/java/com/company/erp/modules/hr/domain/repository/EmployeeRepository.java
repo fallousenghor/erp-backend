@@ -23,4 +23,6 @@ public interface EmployeeRepository {
     Page<Employee> findAll(Specification<Employee> spec, Pageable pageable);
 
     long countByDepartmentId(UUID departmentId);
+    
+    void delete(Employee employee);
 }

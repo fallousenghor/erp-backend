@@ -60,6 +60,71 @@ public class CustomPermissionEvaluator implements PermissionEvaluator {
         "ROLE_TEACHER"
     );
 
+    // Roles that can view attendance data
+    private static final Set<String> ATTENDANCE_VIEW_ROLES = Set.of(
+        "ROLE_ADMIN",
+        "ROLE_HR_MANAGER",
+        "ROLE_MANAGER",
+        "ROLE_EMPLOYEE",
+        "ROLE_FINANCE",
+        "ROLE_USER",
+        "ROLE_TEACHER"
+    );
+
+    // Roles that can create/update/delete attendance data
+    private static final Set<String> ATTENDANCE_MANAGE_ROLES = Set.of(
+        "ROLE_ADMIN",
+        "ROLE_HR_MANAGER",
+        "ROLE_MANAGER"
+    );
+
+    // Roles that can view leave data
+    private static final Set<String> LEAVE_VIEW_ROLES = Set.of(
+        "ROLE_ADMIN",
+        "ROLE_HR_MANAGER",
+        "ROLE_MANAGER",
+        "ROLE_EMPLOYEE",
+        "ROLE_FINANCE",
+        "ROLE_USER",
+        "ROLE_TEACHER"
+    );
+
+    // Roles that can request leave
+    private static final Set<String> LEAVE_REQUEST_ROLES = Set.of(
+        "ROLE_ADMIN",
+        "ROLE_HR_MANAGER",
+        "ROLE_MANAGER",
+        "ROLE_EMPLOYEE",
+        "ROLE_FINANCE",
+        "ROLE_USER",
+        "ROLE_TEACHER"
+    );
+
+    // Roles that can approve/reject leave
+    private static final Set<String> LEAVE_APPROVE_ROLES = Set.of(
+        "ROLE_ADMIN",
+        "ROLE_HR_MANAGER",
+        "ROLE_MANAGER"
+    );
+
+    // Roles that can create/update/delete departments
+    private static final Set<String> DEPARTMENT_MANAGE_ROLES = Set.of(
+        "ROLE_ADMIN",
+        "ROLE_HR_MANAGER",
+        "ROLE_MANAGER"
+    );
+
+    // Roles that can view departments
+    private static final Set<String> DEPARTMENT_VIEW_ROLES = Set.of(
+        "ROLE_ADMIN",
+        "ROLE_HR_MANAGER",
+        "ROLE_MANAGER",
+        "ROLE_EMPLOYEE",
+        "ROLE_FINANCE",
+        "ROLE_USER",
+        "ROLE_TEACHER"
+    );
+
     @Override
     public boolean hasPermission(Authentication authentication,
                                   Object targetDomainObject,
@@ -88,7 +153,48 @@ public class CustomPermissionEvaluator implements PermissionEvaluator {
         if ("project:read".equals(permission.toString()) && hasAnyRole(authentication, PROJECT_VIEW_ROLES)) {
             return true;
         }
-        
+
+        // Grant access for attendance:read based on ATTENDANCE_VIEW_ROLES
+        if ("attendance:read".equals(permission.toString()) && hasAnyRole(authentication, ATTENDANCE_VIEW_ROLES)) {
+            return true;
+        }
+
+        // Grant access for attendance:create, attendance:update, attendance:delete based on ATTENDANCE_MANAGE_ROLES
+        if (("attendance:create".equals(permission.toString()) ||
+             "attendance:update".equals(permission.toString()) ||
+             "attendance:delete".equals(permission.toString())) &&
+            hasAnyRole(authentication, ATTENDANCE_MANAGE_ROLES)) {
+            return true;
+        }
+
+        // Grant access for leave:read based on LEAVE_VIEW_ROLES
+        if ("leave:read".equals(permission.toString()) && hasAnyRole(authentication, LEAVE_VIEW_ROLES)) {
+            return true;
+        }
+
+        // Grant access for leave:request based on LEAVE_REQUEST_ROLES
+        if ("leave:request".equals(permission.toString()) && hasAnyRole(authentication, LEAVE_REQUEST_ROLES)) {
+            return true;
+        }
+
+        // Grant access for leave:approve based on LEAVE_APPROVE_ROLES
+        if ("leave:approve".equals(permission.toString()) && hasAnyRole(authentication, LEAVE_APPROVE_ROLES)) {
+            return true;
+        }
+
+        // Grant access for department:create, department:update, department:delete based on DEPARTMENT_MANAGE_ROLES
+        if (("department:create".equals(permission.toString()) ||
+             "department:update".equals(permission.toString()) ||
+             "department:delete".equals(permission.toString())) &&
+            hasAnyRole(authentication, DEPARTMENT_MANAGE_ROLES)) {
+            return true;
+        }
+
+        // Grant access for department:read based on DEPARTMENT_VIEW_ROLES
+        if ("department:read".equals(permission.toString()) && hasAnyRole(authentication, DEPARTMENT_VIEW_ROLES)) {
+            return true;
+        }
+
         return hasAuthority(authentication, permission.toString());
     }
 
@@ -121,7 +227,48 @@ public class CustomPermissionEvaluator implements PermissionEvaluator {
         if ("project:read".equals(permission.toString()) && hasAnyRole(authentication, PROJECT_VIEW_ROLES)) {
             return true;
         }
-        
+
+        // Grant access for attendance:read based on ATTENDANCE_VIEW_ROLES
+        if ("attendance:read".equals(permission.toString()) && hasAnyRole(authentication, ATTENDANCE_VIEW_ROLES)) {
+            return true;
+        }
+
+        // Grant access for attendance:create, attendance:update, attendance:delete based on ATTENDANCE_MANAGE_ROLES
+        if (("attendance:create".equals(permission.toString()) ||
+             "attendance:update".equals(permission.toString()) ||
+             "attendance:delete".equals(permission.toString())) &&
+            hasAnyRole(authentication, ATTENDANCE_MANAGE_ROLES)) {
+            return true;
+        }
+
+        // Grant access for leave:read based on LEAVE_VIEW_ROLES
+        if ("leave:read".equals(permission.toString()) && hasAnyRole(authentication, LEAVE_VIEW_ROLES)) {
+            return true;
+        }
+
+        // Grant access for leave:request based on LEAVE_REQUEST_ROLES
+        if ("leave:request".equals(permission.toString()) && hasAnyRole(authentication, LEAVE_REQUEST_ROLES)) {
+            return true;
+        }
+
+        // Grant access for leave:approve based on LEAVE_APPROVE_ROLES
+        if ("leave:approve".equals(permission.toString()) && hasAnyRole(authentication, LEAVE_APPROVE_ROLES)) {
+            return true;
+        }
+
+        // Grant access for department:create, department:update, department:delete based on DEPARTMENT_MANAGE_ROLES
+        if (("department:create".equals(permission.toString()) ||
+             "department:update".equals(permission.toString()) ||
+             "department:delete".equals(permission.toString())) &&
+            hasAnyRole(authentication, DEPARTMENT_MANAGE_ROLES)) {
+            return true;
+        }
+
+        // Grant access for department:read based on DEPARTMENT_VIEW_ROLES
+        if ("department:read".equals(permission.toString()) && hasAnyRole(authentication, DEPARTMENT_VIEW_ROLES)) {
+            return true;
+        }
+
         return hasAuthority(authentication, permission.toString());
     }
 

@@ -16,7 +16,7 @@ import java.time.LocalTime;
 import java.util.List;
 import java.util.UUID;
 
-@RestController
+@RestController("hrAttendanceController")
 @RequestMapping("/api/v1/attendances")
 @Tag(name = "Attendance", description = "HR — Attendance tracking")
 @SecurityRequirement(name = "bearerAuth")

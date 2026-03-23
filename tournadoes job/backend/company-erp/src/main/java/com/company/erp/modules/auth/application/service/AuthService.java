@@ -34,6 +34,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -220,12 +221,18 @@ public class AuthService {
     }
 
     private UserDetailsImpl buildUserDetails(User user) {
+        // Extract role names from user roles
+        Set<String> roleNames = user.getRoles().stream()
+                .map(Role::getName)
+                .collect(Collectors.toSet());
+        
         return UserDetailsImpl.builder()
                 .id(user.getId())
                 .username(user.getUsername())
                 .password(user.getPassword())
                 .enabled(user.isEnabled())
                 .accountNonLocked(!user.isLocked())
+                .roles(roleNames)
                 .permissions(
                         user.getRoles().stream()
                                 .flatMap(r -> r.getPermissions().stream())

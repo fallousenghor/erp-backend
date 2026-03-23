@@ -191,4 +191,12 @@ public class EmployeeService {
         String random = String.format("%05d", (int) (Math.random() * 99999));
         return "EMP-" + year + "-" + random;
     }
+
+    @Auditable(action = "DELETE_EMPLOYEE", entity = "Employee")
+    @PreAuthorize("hasPermission(null, 'employee:delete')")
+    public void delete(UUID id) {
+        Employee employee = findOrThrow(id);
+        employeeRepository.delete(employee);
+        log.info("Employee permanently deleted: {}", employee.getEmployeeNumber());
+    }
 }

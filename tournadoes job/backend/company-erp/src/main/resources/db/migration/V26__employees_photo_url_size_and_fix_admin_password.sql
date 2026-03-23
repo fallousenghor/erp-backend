@@ -10,7 +10,7 @@ COMMENT ON COLUMN employees.qr_code_url IS 'Cloudinary public URL for employee Q
 
 -- 2. Data update: Fix admin password hash to correct BCrypt12 for 'Admin@123'
 UPDATE users 
-SET password = '$2a$12$RhuFE/xRsn950v8LkCzDku9gBCmCH45Xm/d4o5ppgoLf84EsXV7re', 
+SET password = '$2a$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewY5GyYzvIGKq.Hm', 
     failed_attempts = 0 
 WHERE username = 'admin';
 

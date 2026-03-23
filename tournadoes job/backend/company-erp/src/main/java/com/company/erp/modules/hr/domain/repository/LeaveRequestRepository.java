@@ -15,7 +15,7 @@ public interface LeaveRequestRepository {
 
     Page<LeaveRequest> findByEmployeeId(UUID employeeId, Pageable pageable);
 
-    Page<LeaveRequest> findByStatus(LeaveRequest.LeaveStatus status, Pageable pageable);
+    Page<LeaveRequest> findByStatus(String status, Pageable pageable);
 
     Page<LeaveRequest> findAll(Pageable pageable);
 }

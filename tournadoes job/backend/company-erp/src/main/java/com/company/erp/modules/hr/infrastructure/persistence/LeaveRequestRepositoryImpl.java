@@ -22,7 +22,7 @@ public class LeaveRequestRepositoryImpl implements LeaveRequestRepository {
     @Override public Page<LeaveRequest> findAll(Pageable pageable)              { return jpaRepository.findAll(pageable); }
 
     @Override
-    public Page<LeaveRequest> findByStatus(LeaveRequest.LeaveStatus status, Pageable pageable) {
+    public Page<LeaveRequest> findByStatus(String status, Pageable pageable) {
         return jpaRepository.findByStatus(status, pageable);
     }
 }

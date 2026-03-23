@@ -24,8 +24,13 @@ public class EmployeeRepositoryImpl implements EmployeeRepository {
     @Override public boolean existsByEmployeeNumber(String n)          { return jpaRepository.existsByEmployeeNumber(n); }
     @Override public long countByDepartmentId(UUID deptId)             { return jpaRepository.countByDepartmentId(deptId); }
 
-    @Override
+@Override
     public Page<Employee> findAll(Specification<Employee> spec, Pageable pageable) {
         return jpaRepository.findAll(spec, pageable);
+    }
+
+    @Override
+    public void delete(Employee employee) {
+        jpaRepository.delete(employee);
     }
 }

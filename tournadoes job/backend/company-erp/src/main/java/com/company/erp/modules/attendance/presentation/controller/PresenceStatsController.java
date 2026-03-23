@@ -26,13 +26,13 @@ public class PresenceStatsController {
   private final AttendanceService attendanceService;
 
   @Operation(summary = "Daily presence stats")
-  @GetMapping("/stats")
+  @GetMapping("/stats/presence")
   public ResponseEntity<PresenceStatsResponse> getPresenceStats() {
     return ResponseEntity.ok(attendanceService.getPresenceStats());
   }
 
   @Operation(summary = "Weekly presence data for chart")
-  @GetMapping("/weekly")
+  @GetMapping("/stats/weekly")
   public ResponseEntity<WeeklyPresenceResponse> getWeeklyPresence() {
     return ResponseEntity.ok(attendanceService.getWeeklyPresence());
   }
