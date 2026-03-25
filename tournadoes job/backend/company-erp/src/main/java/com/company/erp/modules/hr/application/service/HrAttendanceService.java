@@ -3,6 +3,7 @@ package com.company.erp.modules.hr.application.service;
 import com.company.erp.modules.hr.application.dto.response.AttendanceResponse;
 import com.company.erp.modules.hr.domain.model.Attendance;
 import com.company.erp.modules.hr.domain.repository.AttendanceRepository;
+import com.company.erp.modules.hr.domain.repository.EmployeeRepository;
 import com.company.erp.shared.exception.BusinessException;
 import com.company.erp.shared.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,7 @@ import java.util.stream.Collectors;
 public class HrAttendanceService {
 
     private final AttendanceRepository attendanceRepository;
+    private final EmployeeRepository employeeRepository;
 
     @PreAuthorize("hasPermission(null, 'employee:update')")
     public AttendanceResponse recordAttendance(UUID employeeId, LocalDate date,
@@ -41,8 +43,14 @@ public class HrAttendanceService {
             return toResponse(attendanceRepository.save(attendance));
         }
 
+        // Fetch employee to get actual name and department
+        var employee = employeeRepository.findById(employeeId)
+            .orElseThrow(() -> new BusinessException(ErrorCode.EMPLOYEE_NOT_FOUND, employeeId.toString()));
+
         Attendance attendance = Attendance.builder()
                 .employeeId(employeeId)
+                .employeeName(employee.getFullName())
+                .departmentName(employee.getDepartmentName() != null ? employee.getDepartmentName() : "N/A")
                 .attendanceDate(date)
                 .checkIn(checkIn)
                 .checkOut(checkOut)
@@ -51,6 +59,13 @@ public class HrAttendanceService {
                 .build();
 
         return toResponse(attendanceRepository.save(attendance));
+    }
+
+    @Transactional(readOnly = true)
+    public List<AttendanceResponse> findAll() {
+        return attendanceRepository.findAll().stream()
+                .map(this::toResponse)
+                .collect(Collectors.toList());
     }
 
     @PreAuthorize("hasPermission(null, 'employee:update')")
@@ -88,7 +103,10 @@ public class HrAttendanceService {
     }
 
     private AttendanceResponse toResponse(Attendance a) {
-        return new AttendanceResponse(a.getId(), a.getEmployeeId(), a.getAttendanceDate(),
+        return new AttendanceResponse(a.getId(), a.getEmployeeId(), a.getEmployeeId().toString().substring(0, 8),
+                a.getEmployeeName() != null ? a.getEmployeeName() : "Employé " + a.getEmployeeId().toString().substring(0, 8),
+                a.getDepartmentName() != null ? a.getDepartmentName() : "Non assigné",
+                a.getAttendanceDate(),
                 a.getCheckIn(), a.getCheckOut(), a.getStatus(), a.getNotes());
     }
 }

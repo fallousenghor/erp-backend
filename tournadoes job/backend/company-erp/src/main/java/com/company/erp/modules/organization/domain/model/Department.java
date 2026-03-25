@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -43,6 +44,10 @@ public class Department extends BaseAuditEntity {
 
     @Column(name = "deleted_at")
     private java.time.LocalDateTime deletedAt;
+
+    @Column(name = "budget", nullable = false, precision = 15, scale = 2)
+    @Builder.Default
+    private java.math.BigDecimal budget = java.math.BigDecimal.ZERO;
 
     @OneToMany(mappedBy = "department", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
@@ -87,5 +92,19 @@ public class Department extends BaseAuditEntity {
         this.deleted = true;
         this.active = false;
         this.deletedAt = java.time.LocalDateTime.now();
+    }
+
+    // ── Budget domain logic ──────────────────────────────────────────────────
+
+    public void updateBudget(BigDecimal newBudget) {
+        if (newBudget == null || newBudget.compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException("Budget must be non-negative");
+        }
+        this.budget = newBudget;
+    }
+
+    public BigDecimal remainingBudget() {
+        // To be computed from expenses - placeholder
+        return this.budget;
     }
 }

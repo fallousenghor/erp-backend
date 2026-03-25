@@ -11,35 +11,34 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
-public interface AttendanceRepository extends JpaRepository<AttendanceRecord, UUID> {
+public interface AttendanceRepositoryFixed extends JpaRepository<AttendanceRecord, UUID> {
 
   boolean existsByEmployeeIdAndRecordDate(UUID employeeId, LocalDate recordDate);
 
   List<AttendanceRecord> findAllByEmployeeIdAndRecordDateBetweenOrderByRecordDate(
       UUID employeeId, LocalDate fromDate, LocalDate toDate);
 
-  // FIXED: Native query with CAST() function instead of :: casting to avoid Hibernate parameter parsing issues
   @Query(value = """
-    select ar.* from attendance_records ar
-    where (cast(:employeeId as uuid) is null or ar.employee_id = cast(:employeeId as uuid))
-      and (cast(:fromDate as date) is null or ar.record_date >= cast(:fromDate as date))
-      and (cast(:toDate as date) is null or ar.record_date <= cast(:toDate as date))
-      and (cast(:status as text) is null or ar.status ilike cast(:status as text))
+    select ar.* from attendance_records ar 
+    where (cast(?1 as uuid) is null or ar.employee_id = cast(?1 as uuid))
+      and (cast(?2 as date) is null or ar.record_date >= cast(?2 as date))
+      and (cast(?3 as date) is null or ar.record_date <= cast(?3 as date))
+      and (cast(?4 as text) is null or ar.status ilike cast(?4 as text))
     order by ar.record_date desc
-    """,
+    """, 
     countQuery = """
-    select count(*) from attendance_records ar
-    where (cast(:employeeId as uuid) is null or ar.employee_id = cast(:employeeId as uuid))
-      and (cast(:fromDate as date) is null or ar.record_date >= cast(:fromDate as date))
-      and (cast(:toDate as date) is null or ar.record_date <= cast(:toDate as date))
-      and (cast(:status as text) is null or ar.status ilike cast(:status as text))
-    """,
+    select count(*) from attendance_records ar 
+    where (cast(?1 as uuid) is null or ar.employee_id = cast(?1 as uuid))
+      and (cast(?2 as date) is null or ar.record_date >= cast(?2 as date))
+      and (cast(?3 as date) is null or ar.record_date <= cast(?3 as date))
+      and (cast(?4 as text) is null or ar.status ilike cast(?4 as text))
+    """, 
     nativeQuery = true)
   Page<AttendanceRecord> findAllWithFilters(
-      @Param("employeeId") UUID employeeId,
-      @Param("fromDate") LocalDate fromDate,
-      @Param("toDate") LocalDate toDate,
-      @Param("status") String status,
+      UUID employeeId,
+      LocalDate fromDate,
+      LocalDate toDate,
+      String status,
       Pageable pageable);
 
   // ── Stats Queries ──────────────────────────────────────────────────────────

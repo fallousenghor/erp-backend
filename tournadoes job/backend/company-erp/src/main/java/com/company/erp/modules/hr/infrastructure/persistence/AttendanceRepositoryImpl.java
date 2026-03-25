@@ -31,4 +31,9 @@ public class AttendanceRepositoryImpl implements AttendanceRepository {
     public List<Attendance> findByEmployeeIdAndDateRange(UUID employeeId, LocalDate from, LocalDate to) {
         return jpaRepository.findByEmployeeIdAndDateRange(employeeId, from, to);
     }
+    
+    @Override
+    public List<Attendance> findAll() {
+        return jpaRepository.findAll();
+    }
 }

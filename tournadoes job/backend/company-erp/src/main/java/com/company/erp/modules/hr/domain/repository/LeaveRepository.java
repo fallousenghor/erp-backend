@@ -34,16 +34,16 @@ public interface LeaveRepository extends JpaRepository<LeaveRequest, UUID> {
       Pageable pageable);
 
   @Query(value = """
-    SELECT 
-      COALESCE(SUM(CASE WHEN leave_type = 'ANNUAL' THEN 1 ELSE 0 END), 0) as annual,
-      COALESCE(SUM(CASE WHEN leave_type = 'SICK' THEN 1 ELSE 0 END), 0) as sick,
-      COALESCE(SUM(CASE WHEN leave_type = 'MATERNITY' THEN 1 ELSE 0 END), 0) as maternity,
-      COALESCE(SUM(CASE WHEN leave_type = 'UNPAID' THEN 1 ELSE 0 END), 0) as unpaid,
-      COALESCE(SUM(CASE WHEN leave_type = 'EXCEPTIONAL' THEN 1 ELSE 0 END), 0) as exceptional
-    FROM leave_requests 
-    WHERE created_at >= COALESCE(:fromDate, '1900-01-01'::date)
+    SELECT
+      COALESCE(COUNT(CASE WHEN l.leave_type = 'ANNUAL' THEN 1 END), 0),
+      COALESCE(COUNT(CASE WHEN l.leave_type = 'SICK' THEN 1 END), 0),
+      COALESCE(COUNT(CASE WHEN l.leave_type = 'MATERNITY' THEN 1 END), 0),
+      COALESCE(COUNT(CASE WHEN l.leave_type = 'UNPAID' THEN 1 END), 0),
+      COALESCE(COUNT(CASE WHEN l.leave_type = 'EXCEPTIONAL' THEN 1 END), 0)
+    FROM leave_requests l
+    WHERE l.created_at >= CAST(:fromDate AS date)
     """, nativeQuery = true)
-  LeaveStatsResponse getStatsByType(@Param("fromDate") LocalDate fromDate);
+  Object[] getStatsByTypeRaw(@Param("fromDate") LocalDate fromDate);
 
   @Query(value = """
     SELECT 

@@ -27,25 +27,28 @@ public class AttendanceController {
 
     @PostMapping
     public ResponseEntity<ApiResponse<AttendanceResponse>> record(
-            @RequestParam UUID employeeId,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalTime checkIn,
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalTime checkOut,
-            @RequestParam(defaultValue = "PRESENT") Attendance.AttendanceStatus status,
-            @RequestParam(required = false) String notes) {
+            @RequestBody RecordAttendanceRequest request) {
         return ResponseEntity.status(201).body(ApiResponse.created(
-                attendanceService.recordAttendance(employeeId, date, checkIn, checkOut, status, notes)));
+                attendanceService.recordAttendance(
+                    request.employeeId(), 
+                    request.date(), 
+                    request.checkIn(), 
+                    request.checkOut(), 
+                    request.status(), 
+                    request.notes())));
     }
 
     @PutMapping("/{attendanceId}")
     public ResponseEntity<ApiResponse<AttendanceResponse>> update(
             @PathVariable UUID attendanceId,
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalTime checkIn,
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalTime checkOut,
-            @RequestParam(required = false) Attendance.AttendanceStatus status,
-            @RequestParam(required = false) String notes) {
+            @RequestBody UpdateAttendanceRequest request) {
         return ResponseEntity.ok(ApiResponse.success(
-                attendanceService.updateAttendance(attendanceId, checkIn, checkOut, status, notes)));
+                attendanceService.updateAttendance(
+                    attendanceId, 
+                    request.checkIn(), 
+                    request.checkOut(), 
+                    request.status(), 
+                    request.notes())));
     }
 
     @GetMapping("/{attendanceId}")
@@ -61,4 +64,26 @@ public class AttendanceController {
         return ResponseEntity.ok(ApiResponse.success(
                 attendanceService.findByEmployeeAndRange(employeeId, from, to)));
     }
+    
+    @GetMapping
+    public ResponseEntity<ApiResponse<List<AttendanceResponse>>> findAll() {
+        return ResponseEntity.ok(ApiResponse.success(attendanceService.findAll()));
+    }
+    
+    // Request DTOs
+    public record RecordAttendanceRequest(
+        UUID employeeId,
+        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
+        @DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalTime checkIn,
+        @DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalTime checkOut,
+        Attendance.AttendanceStatus status,
+        String notes
+    ) {}
+    
+    public record UpdateAttendanceRequest(
+        @DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalTime checkIn,
+        @DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalTime checkOut,
+        Attendance.AttendanceStatus status,
+        String notes
+    ) {}
 }

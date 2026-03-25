@@ -24,8 +24,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfigurationSource;
+import com.company.erp.modules.auth.infrastructure.persistence.UserJpaRepository;
+import com.company.erp.security.jwt.JwtTokenProvider;
+import com.company.erp.security.jwt.JwtTokenValidator;
+import com.company.erp.security.userdetails.UserDetailsServiceImpl;
 
-import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -43,12 +46,12 @@ public class SecurityConfig {
             "/actuator/health"
     };
 
-    private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final AuthEntryPointHandler authEntryPointHandler;
     private final AuthAccessDeniedHandler authAccessDeniedHandler;
     private final UserDetailsService userDetailsService;
     private final CustomPermissionEvaluator customPermissionEvaluator;
     private final CorsConfigurationSource corsConfigurationSource;
+    private final UserJpaRepository userJpaRepository;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -65,9 +68,20 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .anyRequest().authenticated())
                 .authenticationProvider(authenticationProvider())
-                .addFilterBefore(jwtAuthenticationFilter,
+                .addFilterBefore(jwtAuthenticationFilter(null, null, userDetailsService),
                         UsernamePasswordAuthenticationFilter.class)
+                // Disable form login and HTTP Basic to prevent redirects
+                .formLogin(form -> form.disable())
+                .httpBasic(basic -> basic.disable())
                 .build();
+    }
+
+    @Bean
+    public JwtAuthenticationFilter jwtAuthenticationFilter(
+            JwtTokenProvider jwtTokenProvider,
+            JwtTokenValidator jwtTokenValidator,
+            UserDetailsService userDetailsService) {
+        return new JwtAuthenticationFilter(jwtTokenProvider, jwtTokenValidator, userDetailsService);
     }
 
     @Bean
@@ -95,5 +109,10 @@ public class SecurityConfig {
                 new DefaultMethodSecurityExpressionHandler();
         handler.setPermissionEvaluator(customPermissionEvaluator);
         return handler;
+    }
+
+    @Bean
+    public UserDetailsService userDetailsService() {
+        return new UserDetailsServiceImpl(userJpaRepository);
     }
 }

@@ -1,12 +1,12 @@
 package com.company.erp.modules.attendance.domain.model;
 
-// import com.company.erp.shared.domain.AggregateRoot; // Use standard JPA Entity
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.*;
-import lombok.experimental.FieldDefaults;
 
 import java.time.Duration;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.UUID;
 
@@ -43,13 +43,15 @@ public class AttendanceRecord {
   LocalDate recordDate;
 
   @Column
+  @JsonFormat(pattern = "HH:mm")
   LocalTime checkInTime;
 
   @Column
+  @JsonFormat(pattern = "HH:mm")
   LocalTime checkOutTime;
 
-  @Column(columnDefinition = "interval")
-  Duration workedHours;
+  @Column(columnDefinition = "varchar(20)")
+  String workedHours;
 
   @Column(nullable = false, length = 20)
   String status;
@@ -68,5 +70,22 @@ public class AttendanceRecord {
 
   @Column(length = 255)
   String deviceInfo;
+
+  @Column(name = "created_at")
+  LocalDateTime createdAt;
+
+  @Column(name = "updated_at")
+  LocalDateTime updatedAt;
+
+  @PrePersist
+  protected void onCreate() {
+    createdAt = LocalDateTime.now();
+    updatedAt = LocalDateTime.now();
+  }
+
+  @PreUpdate
+  protected void onUpdate() {
+    updatedAt = LocalDateTime.now();
+  }
 }
 

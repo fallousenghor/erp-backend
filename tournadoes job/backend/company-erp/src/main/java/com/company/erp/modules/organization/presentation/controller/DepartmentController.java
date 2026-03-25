@@ -6,6 +6,8 @@ import com.company.erp.modules.organization.application.dto.request.UpdateDepart
 import com.company.erp.shared.exception.BusinessException;
 import com.company.erp.shared.exception.ErrorCode;
 import com.company.erp.modules.organization.application.dto.response.DepartmentResponse;
+import com.company.erp.modules.organization.application.dto.response.DepartmentDetailResponse;
+import com.company.erp.modules.organization.application.dto.response.DepartmentStatsResponse;
 import com.company.erp.modules.organization.application.query.GetDepartmentsQuery;
 import com.company.erp.modules.organization.application.service.DepartmentService;
 import com.company.erp.shared.response.ApiResponse;
@@ -20,6 +22,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.UUID;
 
@@ -37,7 +40,7 @@ public class DepartmentController {
     public ResponseEntity<ApiResponse<DepartmentResponse>> create(
             @Valid @RequestBody CreateDepartmentRequest request) {
         CreateDepartmentCommand command = new CreateDepartmentCommand(
-                request.name(), request.code(), request.description());
+                request.name(), request.code(), request.description(), request.budget());
         return ResponseEntity.status(201)
                 .body(ApiResponse.created(departmentService.create(command)));
     }
@@ -48,22 +51,36 @@ public class DepartmentController {
         return ResponseEntity.ok(ApiResponse.success(departmentService.findById(id)));
     }
 
+    @GetMapping("/{id}/detail")
+    @Operation(summary = "Get department detailed information with head history and budget")
+    public ResponseEntity<ApiResponse<DepartmentDetailResponse>> findDetailById(@PathVariable UUID id) {
+        return ResponseEntity.ok(ApiResponse.success(departmentService.findDetailById(id)));
+    }
+
+    @GetMapping("/{id}/stats")
+    @Operation(summary = "Get department statistics and metrics")
+    public ResponseEntity<ApiResponse<DepartmentStatsResponse>> getStats(@PathVariable UUID id) {
+        return ResponseEntity.ok(ApiResponse.success(departmentService.getStats(id)));
+    }
+
     @GetMapping
     @Operation(summary = "List departments with filtering and pagination")
     public ResponseEntity<ApiResponse<PageResponse<DepartmentResponse>>> findAll(
             @RequestParam(required = false) String name,
             @RequestParam(required = false) String code,
             @RequestParam(required = false) Boolean active,
+            @RequestParam(required = false) BigDecimal minBudget,
+            @RequestParam(required = false) BigDecimal maxBudget,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size,
             @RequestParam(defaultValue = "name") String sortBy) {
         GetDepartmentsQuery query = new GetDepartmentsQuery(
-                name, code, active,
+                name, code, active, minBudget, maxBudget,
                 PageRequest.of(page, size, Sort.by(sortBy)));
         return ResponseEntity.ok(ApiResponse.success(departmentService.findAll(query)));
     }
 
-@PutMapping("/{id}")
+    @PutMapping("/{id}")
     @Operation(summary = "Update department")
     public ResponseEntity<ApiResponse<DepartmentResponse>> update(
             @PathVariable UUID id,
@@ -74,7 +91,23 @@ public class DepartmentController {
         }
         UpdateDepartmentCommand command = new UpdateDepartmentCommand(
                 id, request.name().trim(), request.description(), request.active());
-        return ResponseEntity.ok(ApiResponse.success(departmentService.update(command)));
+        
+        DepartmentResponse response = departmentService.update(command);
+        
+        // Handle budget update if provided
+        if (request.budget() != null) {
+            response = departmentService.updateBudget(id, request.budget());
+        }
+        
+        return ResponseEntity.ok(ApiResponse.success(response));
+    }
+
+    @PatchMapping("/{id}/budget")
+    @Operation(summary = "Update department budget")
+    public ResponseEntity<ApiResponse<DepartmentResponse>> updateBudget(
+            @PathVariable UUID id,
+            @RequestParam BigDecimal budget) {
+        return ResponseEntity.ok(ApiResponse.success(departmentService.updateBudget(id, budget)));
     }
 
     @DeleteMapping("/{id}")
@@ -82,6 +115,12 @@ public class DepartmentController {
     public ResponseEntity<ApiResponse<Void>> delete(@PathVariable UUID id) {
         departmentService.delete(new DeleteDepartmentCommand(id));
         return ResponseEntity.ok(ApiResponse.noContent());
+    }
+
+    @PostMapping("/{id}/restore")
+    @Operation(summary = "Restore a soft-deleted department")
+    public ResponseEntity<ApiResponse<DepartmentResponse>> restore(@PathVariable UUID id) {
+        return ResponseEntity.ok(ApiResponse.success(departmentService.restore(id)));
     }
 
     @PostMapping("/{id}/head")

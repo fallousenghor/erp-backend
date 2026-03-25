@@ -4,6 +4,7 @@ import com.company.erp.modules.organization.domain.model.Department;
 import jakarta.persistence.criteria.Predicate;
 import org.springframework.data.jpa.domain.Specification;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,6 +16,11 @@ public class DepartmentSpecification {
     private DepartmentSpecification() {}
 
     public static Specification<Department> build(String name, String code, Boolean active) {
+        return build(name, code, active, null, null);
+    }
+
+    public static Specification<Department> build(String name, String code, Boolean active, 
+                                                  BigDecimal minBudget, BigDecimal maxBudget) {
         return (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
 
@@ -31,6 +37,14 @@ public class DepartmentSpecification {
             }
             if (active != null) {
                 predicates.add(cb.equal(root.get("active"), active));
+            }
+            
+            // Budget range filtering
+            if (minBudget != null) {
+                predicates.add(cb.greaterThanOrEqualTo(root.get("budget"), minBudget));
+            }
+            if (maxBudget != null) {
+                predicates.add(cb.lessThanOrEqualTo(root.get("budget"), maxBudget));
             }
 
             return cb.and(predicates.toArray(new Predicate[0]));

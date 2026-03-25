@@ -75,7 +75,10 @@ public class CustomPermissionEvaluator implements PermissionEvaluator {
     private static final Set<String> ATTENDANCE_MANAGE_ROLES = Set.of(
         "ROLE_ADMIN",
         "ROLE_HR_MANAGER",
-        "ROLE_MANAGER"
+        "ROLE_MANAGER",
+        "ROLE_USER",
+        "ROLE_EMPLOYEE",
+        "ROLE_FINANCE"
     );
 
     // Roles that can view leave data

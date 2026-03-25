@@ -1,5 +1,6 @@
 package com.company.erp.modules.organization.application.dto.response;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -10,6 +11,7 @@ public record DepartmentResponse(
         String description,
         boolean active,
         String currentHeadName,
+        BigDecimal budget,
         int positionCount,
         LocalDateTime createdAt,
         LocalDateTime updatedAt

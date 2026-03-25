@@ -122,7 +122,17 @@ public class LeaveService {
   @Transactional(readOnly = true)
   @PreAuthorize("hasPermission(null, 'leave:read')")
   public LeaveStatsResponse getStatsByType() {
-    return leaveRepository.getStatsByType(LocalDate.now().minusMonths(1));
+    Object[] result = leaveRepository.getStatsByTypeRaw(LocalDate.now().minusMonths(1));
+    
+    // Convert Object[] to LeaveStatsResponse
+    // Handle case where result might be empty or partial
+    long annual = (result != null && result.length > 0 && result[0] instanceof Number) ? ((Number) result[0]).longValue() : 0L;
+    long sick = (result != null && result.length > 1 && result[1] instanceof Number) ? ((Number) result[1]).longValue() : 0L;
+    long maternity = (result != null && result.length > 2 && result[2] instanceof Number) ? ((Number) result[2]).longValue() : 0L;
+    long unpaid = (result != null && result.length > 3 && result[3] instanceof Number) ? ((Number) result[3]).longValue() : 0L;
+    long exceptional = (result != null && result.length > 4 && result[4] instanceof Number) ? ((Number) result[4]).longValue() : 0L;
+    
+    return new LeaveStatsResponse(annual, sick, maternity, unpaid, exceptional);
   }
 
   @Transactional(readOnly = true)

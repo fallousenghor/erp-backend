@@ -5,6 +5,8 @@ import com.company.erp.modules.attendance.domain.model.AttendanceRecord;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+import java.time.Duration;
+
 @Mapper(componentModel = "spring")
 public interface AttendanceMapper {
 

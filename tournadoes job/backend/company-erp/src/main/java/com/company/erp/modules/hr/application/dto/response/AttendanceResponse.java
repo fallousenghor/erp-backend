@@ -8,6 +8,9 @@ import java.util.UUID;
 public record AttendanceResponse(
         UUID id,
         UUID employeeId,
+        String employeeNumber,
+        String employeeName,
+        String departmentName,
         LocalDate attendanceDate,
         LocalTime checkIn,
         LocalTime checkOut,

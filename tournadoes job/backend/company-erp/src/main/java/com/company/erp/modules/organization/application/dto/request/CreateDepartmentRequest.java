@@ -1,8 +1,10 @@
 package com.company.erp.modules.organization.application.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
+import java.math.BigDecimal;
 
 public record CreateDepartmentRequest(
         @NotBlank(message = "Department name is required")
@@ -15,5 +17,8 @@ public record CreateDepartmentRequest(
         String code,
 
         @Size(max = 500)
-        String description
+        String description,
+
+        @jakarta.validation.constraints.DecimalMin(value = "0.0", inclusive = false, message = "Budget must be positive")
+        java.math.BigDecimal budget
 ) {}

@@ -25,6 +25,12 @@ public class Attendance extends BaseEntity {
     @Column(name = "employee_id", nullable = false)
     private UUID employeeId;
 
+    @Column(name = "employee_name", length = 160)
+    private String employeeName;
+
+    @Column(name = "department_name", length = 100)
+    private String departmentName;
+
     @Column(name = "attendance_date", nullable = false)
     private LocalDate attendanceDate;
 

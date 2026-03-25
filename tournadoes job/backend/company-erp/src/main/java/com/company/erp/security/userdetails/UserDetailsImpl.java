@@ -29,15 +29,20 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        // Include both roles (with ROLE_ prefix) and permissions as authorities
+        // Include both roles and permissions as authorities
+        // Roles from DB already have ROLE_ prefix (e.g., ROLE_ADMIN)
         Set<GrantedAuthority> authorities = roles.stream()
-                .map(role -> new SimpleGrantedAuthority("ROLE_" + role))
+                .map(role -> {
+                    // Ensure role has ROLE_ prefix
+                    String authority = role.startsWith("ROLE_") ? role : "ROLE_" + role;
+                    return new SimpleGrantedAuthority(authority);
+                })
                 .collect(Collectors.toSet());
-        
+
         authorities.addAll(permissions.stream()
                 .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toSet()));
-        
+
         return authorities;
     }
 

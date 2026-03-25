@@ -18,4 +18,6 @@ public interface AttendanceRepository {
     boolean existsByEmployeeIdAndDate(UUID employeeId, LocalDate date);
 
     List<Attendance> findByEmployeeIdAndDateRange(UUID employeeId, LocalDate from, LocalDate to);
+    
+    List<Attendance> findAll();
 }
