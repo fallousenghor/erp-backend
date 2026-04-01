@@ -1,0 +1,48 @@
+@startuml usecase-authentification
+title Diagramme de Cas d'Utilisation - Authentification & Sécurité
+left to right direction
+skinparam packageStyle rectangle
+skinparam actorStyle rectangle
+
+actor "Administrateur" as Admin #LightBlue
+actor "Utilisateur" as User #LightGreen
+
+package "Authentification" {
+  usecase "S'authentifier" as UC_Login
+  usecase "S'inscrire" as UC_Register
+  usecase "Se déconnecter" as UC_Logout
+  usecase "Rafraîchir le token" as UC_Refresh
+}
+
+package "Gestion des Rôles" {
+  usecase "Créer un rôle" as UC_Role_Create
+  usecase "Modifier un rôle" as UC_Role_Update
+  usecase "Supprimer un rôle" as UC_Role_Delete
+  usecase "Consulter les rôles" as UC_Role_Read
+  usecase "Assigner un rôle" as UC_Role_Assign
+}
+
+package "Gestion des Permissions" {
+  usecase "Gérer les permissions" as UC_Permission
+}
+
+' Relations Utilisateur
+User --> UC_Login
+User --> UC_Register
+User --> UC_Logout
+User --> UC_Refresh
+
+' Relations Administrateur
+Admin --> UC_Login
+Admin --> UC_Role_Create
+Admin --> UC_Role_Update
+Admin --> UC_Role_Delete
+Admin --> UC_Role_Read
+Admin --> UC_Role_Assign
+Admin --> UC_Permission
+
+' Relations Include/Extend
+UC_Role_Assign ..> UC_Role_Read : <<include>>
+UC_Permission ..> UC_Role_Create : <<include>>
+
+@enduml

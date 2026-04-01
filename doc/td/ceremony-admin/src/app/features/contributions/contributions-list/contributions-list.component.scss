@@ -1,0 +1,40 @@
+.contributions-list {
+  padding: 20px;
+}
+
+.list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+
+  h2 {
+    margin: 0;
+    color: var(--text-color);
+  }
+
+  .header-actions {
+    display: flex;
+    gap: 10px;
+  }
+}
+
+.actions-card {
+  margin-bottom: 20px;
+  padding: 15px;
+}
+
+.table-card {
+  overflow-x: auto;
+}
+
+.contributions-table {
+  width: 100%;
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 300px;
+}

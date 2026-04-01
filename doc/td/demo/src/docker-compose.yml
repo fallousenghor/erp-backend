@@ -1,0 +1,84 @@
+# docker-compose.yml
+version: '3.8'
+
+services:
+  # Base de données PostgreSQL
+  postgres:
+    image: postgres:15-alpine
+    container_name: ceremony-postgres
+    environment:
+      POSTGRES_DB: ceremony_db
+      POSTGRES_USER: ceremony_user
+      POSTGRES_PASSWORD: ceremony_password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - ceremony-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ceremony_user -d ceremony_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Backend Spring Boot
+  backend:
+    build:
+      context: ..
+      dockerfile: src/Dockerfile
+    container_name: ceremony-backend
+    env_file:
+      - ../.env
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      DATABASE_URL: jdbc:postgresql://postgres:5432/ceremony_db
+      DB_USERNAME: ceremony_user
+      DB_PASSWORD: ceremony_password
+      JWT_SECRET: ${JWT_SECRET}
+      WAVE_API_URL: https://api.wave.com/v1
+      WAVE_API_KEY: ${WAVE_API_KEY}
+      ORANGE_MONEY_API_URL: https://api.orange.com/orange-money-webpay/dev/v1
+      ORANGE_MONEY_MERCHANT_KEY: ${ORANGE_MONEY_MERCHANT_KEY}
+      ORANGE_MONEY_MERCHANT_ID: ${ORANGE_MONEY_MERCHANT_ID}
+      APP_CALLBACK_URL: ${APP_CALLBACK_URL}
+    ports:
+      - "8080:8080"
+    volumes:
+      - uploads_data:/app/uploads
+      - logs_data:/app/logs
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - ceremony-network
+    restart: unless-stopped
+
+  # Nginx (Reverse Proxy)
+  nginx:
+    image: nginx:alpine
+    container_name: ceremony-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./ssl:/etc/nginx/ssl:ro
+      - uploads_data:/usr/share/nginx/html/uploads:ro
+    depends_on:
+      - backend
+    networks:
+      - ceremony-network
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+    driver: local
+  uploads_data:
+    driver: local
+  logs_data:
+    driver: local
+
+networks:
+  ceremony-network:
+    driver: bridge

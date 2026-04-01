@@ -1,0 +1,116 @@
+@startuml class-education
+title Diagramme de Classes - Formation & Éducation
+skinparam classAttributeIconSize 0
+skinparam class {
+  BackgroundColor White
+  BorderColor Black
+}
+
+package "Éducation" {
+  class Student {
+    -id: UUID
+    -studentCode: String
+    -firstName: String
+    -lastName: String
+    -email: String
+    -active: boolean
+    +enroll(TrainingProgram): Enrollment
+    +getGrades(): List<ModuleGrade>
+  }
+  
+  class TrainingProgram {
+    -id: UUID
+    -title: String
+    -description: String
+    -level: ProgramLevel
+    -durationWeeks: int
+    -maxStudents: int
+    -passingScore: BigDecimal
+    +addModule(CourseModule): void
+    +getModules(): List<CourseModule>
+  }
+  
+  class Enrollment {
+    -id: UUID
+    -studentId: UUID
+    -programId: UUID
+    -enrollmentDate: LocalDate
+    -status: EnrollmentStatus
+    -finalAverage: BigDecimal
+    -passed: boolean
+    +addGrade(ModuleGrade): void
+    +calculateAverage(): BigDecimal
+    +complete(): void
+  }
+  
+  class CourseModule {
+    -id: UUID
+    -title: String
+    -description: String
+    -durationHours: int
+    -orderIndex: int
+    -coefficient: double
+    -teacherId: UUID
+  }
+  
+  class ModuleGrade {
+    -id: UUID
+    -enrollmentId: UUID
+    -moduleId: UUID
+    -gradeValue: BigDecimal
+    -recordedDate: LocalDate
+    -comments: String
+  }
+  
+  class Teacher {
+    -id: UUID
+    -firstName: String
+    -lastName: String
+    -email: String
+    -specialization: String
+    -active: boolean
+    +assignModule(CourseModule): void
+    +recordGrade(ModuleGrade): void
+  }
+}
+
+class BaseEntity {
+  -id: UUID
+  -createdAt: LocalDateTime
+  -updatedAt: LocalDateTime
+}
+
+class BaseAuditEntity {
+  -createdBy: String
+  -updatedBy: String
+}
+
+' Relations
+BaseEntity <|-- Student
+BaseEntity <|-- TrainingProgram
+BaseEntity <|-- Enrollment
+BaseEntity <|-- CourseModule
+BaseEntity <|-- ModuleGrade
+BaseEntity <|-- Teacher
+BaseAuditEntity <|-- Student
+BaseAuditEntity <|-- TrainingProgram
+BaseAuditEntity <|-- Enrollment
+BaseAuditEntity <|-- Teacher
+
+Student "1" --> "0..*" Enrollment : enrollments >
+TrainingProgram "1" --> "0..*" Enrollment : enrollments >
+TrainingProgram "1" *-- "1..*" CourseModule : modules >
+Enrollment "1" *-- "0..*" ModuleGrade : grades >
+CourseModule "0..*" --> "1" Teacher : teacher >
+
+note right of Enrollment
+  Calcule la moyenne pondérée
+  par les coefficients
+end note
+
+note right of TrainingProgram
+  Composé de plusieurs
+  modules de formation
+end note
+
+@enduml

@@ -1,0 +1,321 @@
+@startuml
+title TOUTES LES CLASSES - ERP Entreprise
+
+skinparam classAttributeIconSize 0
+skinparam class {
+  BackgroundColor White
+  BorderColor Black
+}
+
+' ==================== AUTHENTIFICATION ====================
+rectangle "Authentification" {
+  enum RoleType {
+    ADMIN
+    EMPLOYEE
+    MANAGER
+    HR
+    ACCOUNTANT
+  }
+  
+  enum PermissionType {
+    READ
+    WRITE
+    DELETE
+    ADMIN
+  }
+  
+  class User {
+    username: String
+    email: String
+    password: String
+    enabled: boolean
+  }
+  
+  class Role {
+    name: RoleType
+    description: String
+  }
+  
+  class Permission {
+    name: PermissionType
+    resource: String
+  }
+  
+  class RefreshToken {
+    token: String
+    expiresAt: LocalDateTime
+  }
+}
+
+' ==================== RESSOURCES HUMAINES ====================
+rectangle "Ressources Humaines" {
+  enum EmployeeStatus {
+    ACTIVE
+    SUSPENDED
+    TERMINATED
+  }
+  
+  enum LeaveStatus {
+    PENDING
+    APPROVED
+    REJECTED
+  }
+  
+  class Employee {
+    employeeNumber: String
+    firstName: String
+    lastName: String
+    hireDate: LocalDate
+    status: EmployeeStatus
+  }
+  
+  class LeaveRequest {
+    employeeId: UUID
+    startDate: LocalDate
+    endDate: LocalDate
+    status: LeaveStatus
+  }
+  
+  class Attendance {
+    employeeId: UUID
+    attendanceDate: LocalDate
+    checkIn: LocalTime
+    checkOut: LocalTime
+  }
+  
+  class PerformanceReview {
+    employeeId: UUID
+    period: String
+    rating: double
+  }
+  
+  class Objective {
+    employeeId: UUID
+    title: String
+    target: int
+    achieved: int
+  }
+  
+  class Salary {
+    amount: BigDecimal
+    currency: String
+  }
+}
+
+' ==================== FINANCE ====================
+rectangle "Finance" {
+  enum InvoiceStatus {
+    DRAFT
+    SENT
+    PAID
+    CANCELLED
+  }
+  
+  enum PaymentMethod {
+    CASH
+    BANK_TRANSFER
+    CREDIT_CARD
+  }
+  
+  class Invoice {
+    invoiceNumber: String
+    clientName: String
+    issueDate: LocalDate
+    status: InvoiceStatus
+    total: BigDecimal
+  }
+  
+  class InvoiceItem {
+    description: String
+    quantity: int
+    unitPrice: BigDecimal
+  }
+  
+  class Payment {
+    invoiceId: UUID
+    amount: BigDecimal
+    paymentMethod: PaymentMethod
+  }
+  
+  class Expense {
+    title: String
+    amount: BigDecimal
+    status: ExpenseStatus
+  }
+}
+
+' ==================== ÉDUCATION ====================
+rectangle "Éducation" {
+  enum ProgramLevel {
+    BEGINNER
+    INTERMEDIATE
+    ADVANCED
+  }
+  
+  enum EnrollmentStatus {
+    PENDING
+    ACTIVE
+    COMPLETED
+  }
+  
+  class Student {
+    studentCode: String
+    firstName: String
+    lastName: String
+  }
+  
+  class Teacher {
+    specialization: String
+    firstName: String
+    lastName: String
+  }
+  
+  class TrainingProgram {
+    title: String
+    level: ProgramLevel
+    durationWeeks: int
+  }
+  
+  class Enrollment {
+    studentId: UUID
+    programId: UUID
+    status: EnrollmentStatus
+    finalAverage: BigDecimal
+  }
+  
+  class CourseModule {
+    title: String
+    durationHours: int
+    coefficient: double
+  }
+  
+  class ModuleGrade {
+    enrollmentId: UUID
+    moduleId: UUID
+    gradeValue: BigDecimal
+  }
+}
+
+' ==================== ORGANISATION ====================
+rectangle "Organisation" {
+  enum AssetCategory {
+    COMPUTER
+    VEHICLE
+    EQUIPMENT
+  }
+  
+  enum AssetStatus {
+    AVAILABLE
+    ASSIGNED
+    IN_REPAIR
+  }
+  
+  enum ProjectStatus {
+    PLANNING
+    IN_PROGRESS
+    COMPLETED
+  }
+  
+  class Department {
+    name: String
+    code: String
+    budget: BigDecimal
+  }
+  
+  class Position {
+    title: String
+    minSalary: Double
+    maxSalary: Double
+  }
+  
+  class Asset {
+    assetCode: String
+    name: String
+    category: AssetCategory
+    status: AssetStatus
+  }
+  
+  class AssetAssignment {
+    assetId: UUID
+    employeeId: UUID
+    assignedDate: LocalDate
+  }
+  
+  class Project {
+    name: String
+    status: ProjectStatus
+    progress: int
+    budget: BigDecimal
+  }
+}
+
+' ==================== DOCUMENTS ====================
+rectangle "Documents" {
+  enum DocumentType {
+    CONTRACT
+    INVOICE
+    DIPLOMA
+    REPORT
+  }
+  
+  enum DocumentStatus {
+    DRAFT
+    PENDING_SIGNATURE
+    SIGNED
+    ARCHIVED
+  }
+  
+  class Document {
+    name: String
+    type: DocumentType
+    status: DocumentStatus
+    fileUrl: String
+  }
+  
+  class JournalEntry {
+    reference: String
+    debitAmount: BigDecimal
+    creditAmount: BigDecimal
+    accountCode: String
+  }
+}
+
+' ==================== RELATIONS ====================
+
+' Authentification
+User "1" *-- "0..*" Role : roles
+Role "1" *-- "0..*" Permission : permissions
+User "1" *-- "0..*" RefreshToken : tokens
+
+' RH - Héritage
+Person <|-- Employee
+Person <|-- Teacher
+
+' RH - Relations
+Employee "1" *-- "1" Salary : salary
+Employee "1" *-- "0..*" LeaveRequest : requests
+Employee "1" *-- "0..*" Attendance : attendances
+Employee "1" *-- "0..*" PerformanceReview : reviews
+Employee "1" *-- "0..*" Objective : objectives
+
+' Finance - Relations
+Invoice "1" *-- "1..*" InvoiceItem : items
+Invoice "1" *-- "0..*" Payment : payments
+
+' Éducation - Relations
+Student "1" *-- "0..*" Enrollment : enrollments
+TrainingProgram "1" *-- "0..*" Enrollment : enrollments
+TrainingProgram "1" *-- "1..*" CourseModule : modules
+Enrollment "1" *-- "0..*" ModuleGrade : grades
+CourseModule "0..*" --> "1" Teacher : teacher
+
+' Organisation - Relations
+Department "1" *-- "0..*" Position : positions
+Asset "1" *-- "0..*" AssetAssignment : assignments
+
+' Documents - Relations
+Document "1" *-- "0..*" DocumentVersion : versions
+
+note "ERP Entreprise - Tous les modules" as Note1
+
+@enduml

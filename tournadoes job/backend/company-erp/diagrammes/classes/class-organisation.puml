@@ -1,0 +1,127 @@
+@startuml class-organisation
+title Diagramme de Classes - Organisation & Inventaire
+skinparam classAttributeIconSize 0
+skinparam class {
+  BackgroundColor White
+  BorderColor Black
+}
+
+package "Organisation" {
+  class Department {
+    -id: UUID
+    -name: String
+    -code: String
+    -description: String
+    -budget: BigDecimal
+    -active: boolean
+    -deleted: boolean
+    +assignHead(UUID): void
+    +updateBudget(BigDecimal): void
+    +softDelete(): void
+    +restore(): void
+  }
+  
+  class Position {
+    -id: UUID
+    -title: String
+    -description: String
+    -minSalary: Double
+    -maxSalary: Double
+    -active: boolean
+  }
+  
+  class DepartmentHead {
+    -id: UUID
+    -departmentId: UUID
+    -employeeId: UUID
+    -startDate: LocalDate
+    -endDate: LocalDate
+    -current: boolean
+  }
+}
+
+package "Inventaire" {
+  class Asset {
+    -id: UUID
+    -assetCode: String
+    -name: String
+    -category: AssetCategory
+    -status: AssetStatus
+    -purchasePrice: BigDecimal
+    -location: String
+    +assign(UUID): AssetAssignment
+    +returnAsset(): void
+  }
+  
+  class AssetAssignment {
+    -id: UUID
+    -assetId: UUID
+    -employeeId: UUID
+    -assignedDate: LocalDate
+    -returnedDate: LocalDate
+    -active: boolean
+    +returnAsset(): void
+  }
+}
+
+package "Projets" {
+  class Project {
+    -id: UUID
+    -name: String
+    -description: String
+    -status: ProjectStatus
+    -priority: ProjectPriority
+    -progress: Integer
+    -startDate: LocalDate
+    -endDate: LocalDate
+    -budget: BigDecimal
+    +updateProgress(int): void
+    +updateStatus(ProjectStatus): void
+  }
+}
+
+class BaseEntity {
+  -id: UUID
+  -createdAt: LocalDateTime
+  -updatedAt: LocalDateTime
+}
+
+class BaseAuditEntity {
+  -createdBy: String
+  -updatedBy: String
+}
+
+' Relations Organisation
+BaseEntity <|-- Department
+BaseEntity <|-- Position
+BaseEntity <|-- DepartmentHead
+BaseAuditEntity <|-- Department
+BaseAuditEntity <|-- Position
+BaseAuditEntity <|-- DepartmentHead
+
+Department "1" *-- "0..*" Position : positions >
+Department "1" *-- "0..*" DepartmentHead : heads >
+
+' Relations Inventaire
+BaseEntity <|-- Asset
+BaseEntity <|-- AssetAssignment
+BaseAuditEntity <|-- Asset
+BaseAuditEntity <|-- AssetAssignment
+
+Asset "1" *-- "0..*" AssetAssignment : assignments >
+
+' Relations Projets
+BaseEntity <|-- Project
+BaseAuditEntity <|-- Project
+
+note right of Department
+  Supporte le soft delete
+  et historique des chefs
+end note
+
+note right of Asset
+  Catégories: COMPUTER,
+  VEHICLE, EQUIPMENT, etc.
+end note
+
+@enduml

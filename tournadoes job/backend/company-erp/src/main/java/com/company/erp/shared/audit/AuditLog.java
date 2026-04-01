@@ -61,6 +61,18 @@ public class AuditLog {
     @Column(name = "error_message", columnDefinition = "TEXT")
     private String errorMessage;
 
+    @Column(name = "module", length = 100)
+    private String module;
+
+    @Column(name = "status", length = 20)
+    private String status; // 'success', 'warning', 'error'
+
+    @Column(name = "details", columnDefinition = "TEXT")
+    private String details;
+
+    @Column(name = "user_role", length = 50)
+    private String userRole;
+
     @CreatedDate
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;

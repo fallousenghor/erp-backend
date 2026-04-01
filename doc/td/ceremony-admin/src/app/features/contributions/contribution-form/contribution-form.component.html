@@ -1,0 +1,134 @@
+<div class="contribution-form-container">
+  <h1>{{ isEditMode ? 'Modifier la cotisation' : 'Nouvelle cotisation' }}</h1>
+
+  <mat-card class="form-card">
+    <mat-card-content>
+      <form [formGroup]="contributionForm" (ngSubmit)="onSubmit()">
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Membre</mat-label>
+            <mat-select formControlName="memberId" required>
+              <mat-option *ngFor="let member of members" [value]="member.id">
+                {{ member.firstName }} {{ member.lastName }} ({{ member.memberNumber }})
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="f['memberId'].hasError('required')">
+              Le membre est requis
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Année cérémoniale</mat-label>
+            <mat-select formControlName="ceremonialYearId" required>
+              <mat-option *ngFor="let year of ceremonialYears" [value]="year.id">
+                {{ year.year }} {{ year.active ? '(Active)' : '' }}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="f['ceremonialYearId'].hasError('required')">
+              L'année est requise
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Montant attendu</mat-label>
+            <input matInput
+                   type="number"
+                   formControlName="expectedAmount"
+                   placeholder="0"
+                   min="0"
+                   step="0.01"
+                   required>
+            <span matSuffix>FCFA</span>
+            <mat-error *ngIf="f['expectedAmount'].hasError('required')">
+              Le montant est requis
+            </mat-error>
+            <mat-error *ngIf="f['expectedAmount'].hasError('min')">
+              Le montant doit être positif
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Montant payé</mat-label>
+            <input matInput
+                   type="number"
+                   formControlName="paidAmount"
+                   placeholder="0"
+                   min="0"
+                   step="0.01"
+                   required>
+            <span matSuffix>FCFA</span>
+            <mat-error *ngIf="f['paidAmount'].hasError('required')">
+              Le montant payé est requis
+            </mat-error>
+            <mat-error *ngIf="f['paidAmount'].hasError('min')">
+              Le montant doit être positif ou nul
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Date d'échéance</mat-label>
+            <input matInput
+                   [matDatepicker]="dueDatePicker"
+                   formControlName="dueDate"
+                   required>
+            <mat-datepicker-toggle matSuffix [for]="dueDatePicker"></mat-datepicker-toggle>
+            <mat-datepicker #dueDatePicker></mat-datepicker>
+            <mat-error *ngIf="f['dueDate'].hasError('required')">
+              La date d'échéance est requise
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Date de paiement</mat-label>
+            <input matInput
+                   [matDatepicker]="paymentDatePicker"
+                   formControlName="paymentDate">
+            <mat-datepicker-toggle matSuffix [for]="paymentDatePicker"></mat-datepicker-toggle>
+            <mat-datepicker #paymentDatePicker></mat-datepicker>
+          </mat-form-field>
+        </div>
+
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Statut</mat-label>
+            <mat-select formControlName="status" required>
+              <mat-option *ngFor="let status of statuses" [value]="status.value">
+                {{ status.label }}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="f['status'].hasError('required')">
+              Le statut est requis
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="form-field full-width">
+            <mat-label>Notes</mat-label>
+            <textarea matInput
+                      formControlName="notes"
+                      placeholder="Notes supplémentaires"
+                      rows="3"></textarea>
+          </mat-form-field>
+        </div>
+
+        <div class="form-actions">
+          <button mat-button type="button" (click)="cancel()">
+            Annuler
+          </button>
+          <button mat-raised-button
+                  color="primary"
+                  type="submit"
+                  [disabled]="loading || contributionForm.invalid">
+            <mat-spinner *ngIf="loading" diameter="20" class="spinner"></mat-spinner>
+            <span>{{ isEditMode ? 'Modifier' : 'Créer' }}</span>
+          </button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>

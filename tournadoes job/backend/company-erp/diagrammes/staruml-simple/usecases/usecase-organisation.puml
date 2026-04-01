@@ -1,0 +1,24 @@
+@startuml
+title Organisation & Inventaire
+
+actor Administrateur
+actor Employé
+actor Manager RH
+
+usecase "Gérer départements" as UC1
+usecase "Gérer positions" as UC2
+usecase "Gérer assets" as UC3
+usecase "Assigner asset" as UC4
+usecase "Gérer projets" as UC5
+
+Administrateur --> UC1
+Administrateur --> UC2
+Administrateur --> UC3
+Administrateur --> UC5
+
+Employé --> UC5
+
+Manager RH --> UC1
+Manager RH --> UC3
+
+@enduml

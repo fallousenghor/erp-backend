@@ -5,6 +5,7 @@ import com.company.erp.modules.auth.domain.repository.RoleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -18,4 +19,6 @@ public class RoleRepositoryImpl implements RoleRepository {
     @Override public Optional<Role> findById(UUID id)        { return jpaRepository.findById(id); }
     @Override public Optional<Role> findByName(String name)  { return jpaRepository.findByName(name); }
     @Override public boolean existsByName(String name)       { return jpaRepository.existsByName(name); }
+    @Override public List<Role> findAll()                    { return jpaRepository.findAll(); }
+    @Override public void delete(Role r)                     { jpaRepository.delete(r); }
 }

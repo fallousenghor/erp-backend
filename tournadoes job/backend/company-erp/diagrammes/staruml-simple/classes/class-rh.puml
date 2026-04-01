@@ -1,0 +1,147 @@
+@startuml
+title Gestion des Ressources Humaines
+
+' === ENUMS ===
+enum EmployeeStatus {
+  ACTIVE
+  SUSPENDED
+  TERMINATED
+  ON_LEAVE
+}
+
+enum LeaveStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  CANCELLED
+}
+
+enum AttendanceStatus {
+  PRESENT
+  ABSENT
+  LATE
+  REMOTE
+}
+
+enum ReviewStatus {
+  DRAFT
+  IN_PROGRESS
+  COMPLETED
+}
+
+enum ObjectiveStatus {
+  NOT_STARTED
+  IN_PROGRESS
+  ACHIEVED
+  FAILED
+}
+
+' === CLASSES DE BASE ===
+class Person {
+  id: UUID
+  firstName: String
+  lastName: String
+  email: String
+  dateOfBirth: LocalDate
+  +getFullName(): String
+}
+
+class BaseEntity {
+  id: UUID
+  createdAt: LocalDateTime
+  updatedAt: LocalDateTime
+}
+
+' === CLASSES METIER ===
+class Employee {
+  employeeNumber: String
+  hireDate: LocalDate
+  status: EmployeeStatus
+  departmentId: UUID
+  positionId: UUID
+  +requestLeave(): LeaveRequest
+  +terminate(): void
+  +getFullName(): String
+}
+
+class LeaveRequest {
+  employeeId: UUID
+  leaveType: String
+  startDate: LocalDate
+  endDate: LocalDate
+  daysRequested: int
+  reason: String
+  status: LeaveStatus
+  +approve(): void
+  +reject(): void
+  +getDuration(): int
+}
+
+class Attendance {
+  employeeId: UUID
+  attendanceDate: LocalDate
+  checkIn: LocalTime
+  checkOut: LocalTime
+  status: AttendanceStatus
+  +checkIn(): void
+  +checkOut(): void
+  +getWorkingHours(): double
+}
+
+class PerformanceReview {
+  employeeId: UUID
+  period: String
+  rating: double
+  feedback: String
+  status: ReviewStatus
+  reviewerId: UUID
+  +updateRating(): void
+  +complete(): void
+}
+
+class Objective {
+  employeeId: UUID
+  title: String
+  description: String
+  target: int
+  achieved: int
+  status: ObjectiveStatus
+  dueDate: LocalDate
+  +updateProgress(): void
+  +isCompleted(): boolean
+}
+
+class Salary {
+  amount: BigDecimal
+  currency: String
+  payPeriod: String
+  effectiveDate: LocalDate
+  +getAnnualSalary(): BigDecimal
+}
+
+' === HERITAGE ===
+Person <|-- Employee
+BaseEntity <|-- LeaveRequest
+BaseEntity <|-- Attendance
+BaseEntity <|-- PerformanceReview
+BaseEntity <|-- Objective
+BaseEntity <|-- Salary
+
+' === RELATIONS ===
+Employee "1" *-- "1" Salary : "has"
+Employee "1" *-- "0..*" LeaveRequest : "requests"
+Employee "1" *-- "0..*" Attendance : "attendances"
+Employee "1" *-- "0..*" PerformanceReview : "reviews"
+Employee "1" *-- "0..*" Objective : "objectives"
+
+note right of Employee
+  Hérite de Person
+  Statut géré par enum
+end note
+
+note left of LeaveRequest
+  Cycle de vie :
+  PENDING → APPROVED/REJECTED
+end note
+
+@enduml

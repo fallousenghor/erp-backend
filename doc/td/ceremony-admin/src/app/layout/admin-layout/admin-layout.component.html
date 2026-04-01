@@ -1,0 +1,53 @@
+
+<mat-sidenav-container class="sidenav-container">
+  <mat-sidenav #sidenav mode="side" [opened]="sidenavOpened" class="sidenav">
+    <div class="logo-container">
+      <h2>🕌 Ceremony</h2>
+      <div class="sidebar-active-year" *ngIf="activeYear">
+        <mat-icon class="year-icon">event_available</mat-icon>
+        <span class="year-text">{{ activeYear.theme }}</span>
+      </div>
+    </div>
+
+    <mat-nav-list>
+      <ng-container *ngFor="let item of menuItems">
+        <a mat-list-item
+           [routerLink]="item.route"
+           routerLinkActive="active"
+           *ngIf="canShowMenuItem(item)">
+          <mat-icon matListItemIcon>{{item.icon}}</mat-icon>
+          <span matListItemTitle>{{item.label}}</span>
+        </a>
+      </ng-container>
+    </mat-nav-list>
+  </mat-sidenav>
+
+  <mat-sidenav-content>
+    <mat-toolbar color="primary" class="toolbar">
+      <button mat-icon-button (click)="sidenavOpened = !sidenavOpened">
+        <mat-icon>menu</mat-icon>
+      </button>
+
+      <span class="spacer"></span>
+
+      <button mat-icon-button [matMenuTriggerFor]="userMenu">
+        <mat-icon>account_circle</mat-icon>
+      </button>
+      <mat-menu #userMenu="matMenu">
+        <div class="user-info">
+          <p class="user-name">{{currentUser?.username}}</p>
+          <p class="user-role">{{currentUser?.role}}</p>
+        </div>
+        <mat-divider></mat-divider>
+        <button mat-menu-item (click)="logout()">
+          <mat-icon>exit_to_app</mat-icon>
+          <span>Déconnexion</span>
+        </button>
+      </mat-menu>
+    </mat-toolbar>
+
+    <div class="content">
+      <router-outlet></router-outlet>
+    </div>
+  </mat-sidenav-content>
+</mat-sidenav-container>

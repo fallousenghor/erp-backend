@@ -1,0 +1,51 @@
+.settings-page {
+  padding: 20px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.settings-card {
+  margin-bottom: 20px;
+}
+
+.profile-info {
+  margin-bottom: 20px;
+
+  .info-field {
+    margin-bottom: 16px;
+
+    strong {
+      display: block;
+      margin-bottom: 4px;
+      color: var(--text-color);
+    }
+
+    p {
+      margin: 0;
+      color: var(--text-secondary);
+    }
+  }
+}
+
+.settings-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.settings-group {
+  margin-bottom: 20px;
+
+  h3 {
+    margin-bottom: 16px;
+    color: var(--text-color);
+    font-size: 16px;
+    font-weight: 500;
+  }
+
+  mat-radio-group,
+  mat-select,
+  mat-slide-toggle {
+    width: 100%;
+  }
+}

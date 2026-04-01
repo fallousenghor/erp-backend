@@ -26,9 +26,12 @@ public class Salary {
     private String currency;
 
     public static Salary of(BigDecimal amount, String currency) {
-        if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
+        if (amount == null) {
+            amount = BigDecimal.ZERO;
+        }
+        if (amount.compareTo(BigDecimal.ZERO) < 0) {
             throw new BusinessException(ErrorCode.VALIDATION_ERROR,
-                    "Salary must be greater than zero");
+                    "Salary cannot be negative");
         }
         if (currency == null || currency.isBlank() || currency.length() != 3) {
             throw new BusinessException(ErrorCode.VALIDATION_ERROR,

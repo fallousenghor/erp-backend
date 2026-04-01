@@ -1,0 +1,80 @@
+@startuml usecase-education
+title Diagramme de Cas d'Utilisation - Formation & Éducation
+left to right direction
+skinparam packageStyle rectangle
+skinparam actorStyle rectangle
+
+actor "Étudiant" as Student #Pink
+actor "Enseignant" as Teacher #Cyan
+actor "Administrateur" as Admin #LightBlue
+
+package "Gestion des Étudiants" {
+  usecase "Inscrire étudiant" as UC_Student_Create
+  usecase "Consulter étudiants" as UC_Student_Read
+  usecase "Modifier étudiant" as UC_Student_Update
+}
+
+package "Gestion des Programmes" {
+  usecase "Créer programme" as UC_Program_Create
+  usecase "Consulter programmes" as UC_Program_Read
+  usecase "Modifier programme" as UC_Program_Update
+  usecase "Voir statistiques" as UC_Program_Stats
+}
+
+package "Inscriptions" {
+  usecase "Inscrire au programme" as UC_Enrollment_Create
+  usecase "Consulter inscriptions" as UC_Enrollment_Read
+  usecase "Compléter inscription" as UC_Enrollment_Complete
+}
+
+package "Gestion des Notes" {
+  usecase "Saisir notes" as UC_Grade_Create
+  usecase "Consulter notes" as UC_Grade_Read
+  usecase "Voir statistiques notes" as UC_Grade_Stats
+  usecase "Voir moyenne étudiant" as UC_Grade_Average
+}
+
+package "Gestion des Enseignants" {
+  usecase "Créer enseignant" as UC_Teacher_Create
+  usecase "Consulter enseignants" as UC_Teacher_Read
+  usecase "Modifier enseignant" as UC_Teacher_Update
+}
+
+' Relations Étudiant
+Student --> UC_Student_Read
+Student --> UC_Program_Read
+Student --> UC_Enrollment_Create
+Student --> UC_Enrollment_Read
+Student --> UC_Grade_Read
+Student --> UC_Grade_Average
+
+' Relations Enseignant
+Teacher --> UC_Program_Read
+Teacher --> UC_Enrollment_Read
+Teacher --> UC_Grade_Create
+Teacher --> UC_Grade_Read
+Teacher --> UC_Teacher_Read
+
+' Relations Administrateur
+Admin --> UC_Student_Create
+Admin --> UC_Student_Read
+Admin --> UC_Student_Update
+Admin --> UC_Program_Create
+Admin --> UC_Program_Read
+Admin --> UC_Program_Update
+Admin --> UC_Program_Stats
+Admin --> UC_Enrollment_Read
+Admin --> UC_Enrollment_Complete
+Admin --> UC_Grade_Read
+Admin --> UC_Grade_Stats
+Admin --> UC_Teacher_Create
+Admin --> UC_Teacher_Read
+Admin --> UC_Teacher_Update
+
+' Relations Include/Extend
+UC_Enrollment_Create ..> UC_Student_Read : <<include>>
+UC_Enrollment_Create ..> UC_Program_Read : <<include>>
+UC_Grade_Create ..> UC_Enrollment_Read : <<include>>
+UC_Grade_Average ..> UC_Grade_Read : <<include>>
+
+@enduml

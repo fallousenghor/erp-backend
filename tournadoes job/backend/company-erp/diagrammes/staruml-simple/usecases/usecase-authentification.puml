@@ -1,0 +1,19 @@
+@startuml
+title Authentification & Sécurité
+
+actor Administrateur
+actor Utilisateur
+
+usecase "Se connecter" as UC1
+usecase "Se déconnecter" as UC2
+usecase "Gérer rôles" as UC3
+usecase "Gérer permissions" as UC4
+
+Utilisateur --> UC1
+Utilisateur --> UC2
+
+Administrateur --> UC1
+Administrateur --> UC3
+Administrateur --> UC4
+
+@enduml

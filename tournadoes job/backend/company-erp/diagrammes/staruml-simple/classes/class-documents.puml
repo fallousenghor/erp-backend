@@ -1,0 +1,112 @@
+@startuml
+title Documents & Comptabilité
+
+' === ENUMS ===
+enum DocumentType {
+  CONTRACT
+  INVOICE
+  DIPLOMA
+  CERTIFICATE
+  REPORT
+  POLICY
+  OTHER
+}
+
+enum DocumentCategory {
+  HR
+  FINANCE
+  LEGAL
+  TECHNICAL
+  ADMINISTRATIVE
+}
+
+enum DocumentStatus {
+  DRAFT
+  PENDING_SIGNATURE
+  SIGNED
+  ARCHIVED
+  EXPIRED
+}
+
+enum JournalEntryType {
+  DEBIT
+  CREDIT
+  ADJUSTMENT
+}
+
+' === CLASSES DE BASE ===
+class BaseEntity {
+  id: UUID
+  createdAt: LocalDateTime
+  updatedAt: LocalDateTime
+  version: Long
+}
+
+class BaseAuditEntity {
+  createdBy: String
+  updatedBy: String
+  createdAt: LocalDateTime
+  updatedAt: LocalDateTime
+}
+
+' === CLASSES METIER ===
+class Document {
+  name: String
+  description: String
+  type: DocumentType
+  category: DocumentCategory
+  status: DocumentStatus
+  signatureRequired: boolean
+  fileUrl: String
+  fileSize: Long
+  mimeType: String
+  uploadedBy: String
+  expiresAt: LocalDateTime
+  +addSignature(): void
+  +updateStatus(): void
+  +isExpired(): boolean
+  +download(): byte[]
+}
+
+class DocumentVersion {
+  versionNumber: int
+  fileUrl: String
+  changedBy: String
+  changedAt: LocalDateTime
+  changeDescription: String
+  +revert(): void
+}
+
+class JournalEntry {
+  reference: String
+  entryDate: LocalDateTime
+  description: String
+  debitAmount: BigDecimal
+  creditAmount: BigDecimal
+  accountCode: String
+  accountName: String
+  type: JournalEntryType
+  +validate(): boolean
+  +isBalanced(): boolean
+}
+
+' === HERITAGE ===
+BaseEntity <|-- Document
+BaseEntity <|-- DocumentVersion
+BaseEntity <|-- JournalEntry
+BaseAuditEntity <|-- Document
+
+' === RELATIONS ===
+Document "1" *-- "0..*" DocumentVersion : "versions"
+
+note right of Document
+  Cycle de vie :
+  DRAFT → PENDING → SIGNED
+end note
+
+note left of JournalEntry
+  Écriture comptable
+  en partie double
+end note
+
+@enduml

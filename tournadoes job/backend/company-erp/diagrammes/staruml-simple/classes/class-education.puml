@@ -1,0 +1,124 @@
+@startuml
+title Formation & Éducation
+
+' === ENUMS ===
+enum ProgramLevel {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+  EXPERT
+}
+
+enum EnrollmentStatus {
+  PENDING
+  ACTIVE
+  COMPLETED
+  DROPPED_OUT
+}
+
+enum GradeStatus {
+  GRADED
+  PENDING
+  EXCUSED
+}
+
+' === CLASSES DE BASE ===
+class Person {
+  id: UUID
+  firstName: String
+  lastName: String
+  email: String
+  +getFullName(): String
+}
+
+class BaseEntity {
+  id: UUID
+  createdAt: LocalDateTime
+  updatedAt: LocalDateTime
+}
+
+' === CLASSES METIER ===
+class Student {
+  studentCode: String
+  enrollmentYear: int
+  active: boolean
+  +enroll(): Enrollment
+  +getGrades(): List<ModuleGrade>
+  +getAverage(): BigDecimal
+}
+
+class TrainingProgram {
+  title: String
+  description: String
+  level: ProgramLevel
+  durationWeeks: int
+  maxStudents: int
+  passingScore: BigDecimal
+  +addModule(): void
+  +getModules(): List<CourseModule>
+}
+
+class Enrollment {
+  studentId: UUID
+  programId: UUID
+  enrollmentDate: LocalDate
+  status: EnrollmentStatus
+  finalAverage: BigDecimal
+  passed: boolean
+  +addGrade(): void
+  +calculateAverage(): BigDecimal
+  +complete(): void
+}
+
+class CourseModule {
+  title: String
+  description: String
+  durationHours: int
+  orderIndex: int
+  coefficient: double
+  teacherId: UUID
+  +getDuration(): int
+}
+
+class ModuleGrade {
+  enrollmentId: UUID
+  moduleId: UUID
+  gradeValue: BigDecimal
+  recordedDate: LocalDate
+  comments: String
+  +isPassing(): boolean
+}
+
+class Teacher {
+  specialization: String
+  active: boolean
+  +assignModule(): void
+  +recordGrade(): void
+}
+
+' === HERITAGE ===
+Person <|-- Student
+Person <|-- Teacher
+BaseEntity <|-- TrainingProgram
+BaseEntity <|-- Enrollment
+BaseEntity <|-- CourseModule
+BaseEntity <|-- ModuleGrade
+
+' === RELATIONS ===
+Student "1" *-- "0..*" Enrollment : "enrollments"
+TrainingProgram "1" *-- "0..*" Enrollment : "enrollments"
+TrainingProgram "1" *-- "1..*" CourseModule : "modules"
+Enrollment "1" *-- "0..*" ModuleGrade : "grades"
+CourseModule "0..*" --> "1" Teacher : "taught by"
+
+note right of Enrollment
+  Calcule la moyenne
+  et détermine si réussi
+end note
+
+note left of TrainingProgram
+  Composé de modules
+  avec coefficients
+end note
+
+@enduml

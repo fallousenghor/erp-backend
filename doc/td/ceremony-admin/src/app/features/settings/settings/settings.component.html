@@ -1,0 +1,80 @@
+<div class="settings-page">
+  <h2>Paramètres</h2>
+
+  <mat-tab-group>
+    <!-- Profile Tab -->
+    <mat-tab label="Profil">
+      <ng-template mat-tab-label>
+        <mat-icon>person</mat-icon>
+        <span>Mon Profil</span>
+      </ng-template>
+
+      <mat-card class="settings-card">
+        <mat-card-content *ngIf="currentUser">
+          <div class="profile-info">
+            <div class="info-field">
+              <strong>Nom:</strong>
+              <p>{{ currentUser.firstName }} {{ currentUser.lastName }}</p>
+            </div>
+            <div class="info-field">
+              <strong>Email:</strong>
+              <p>{{ currentUser.email }}</p>
+            </div>
+            <div class="info-field">
+              <strong>Rôle:</strong>
+              <p>{{ currentUser.role }}</p>
+            </div>
+            <div class="info-field">
+              <strong>Date de création:</strong>
+              <p>{{ currentUser.createdAt | date: 'dd/MM/yyyy' }}</p>
+            </div>
+          </div>
+
+          <div class="settings-actions">
+            <button mat-raised-button (click)="editProfile()">Modifier le Profil</button>
+            <button mat-raised-button (click)="changePassword()">Changer le Mot de Passe</button>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </mat-tab>
+
+    <!-- Application Settings Tab -->
+    <mat-tab label="Application">
+      <ng-template mat-tab-label>
+        <mat-icon>settings</mat-icon>
+        <span>Application</span>
+      </ng-template>
+
+      <mat-card class="settings-card">
+        <mat-card-content>
+          <div class="settings-group">
+            <h3>Thème</h3>
+            <mat-radio-group [(ngModel)]="currentTheme" (change)="onThemeChange($event.value)">
+              <mat-radio-button value="light">Clair</mat-radio-button>
+              <mat-radio-button value="dark">Sombre</mat-radio-button>
+            </mat-radio-group>
+          </div>
+
+          <mat-divider></mat-divider>
+
+          <div class="settings-group">
+            <h3>Langue</h3>
+            <mat-select [(ngModel)]="selectedLanguage" (selectionChange)="onLanguageChange($event.value)">
+              <mat-option value="fr">Français</mat-option>
+              <mat-option value="en">Anglais</mat-option>
+            </mat-select>
+          </div>
+
+          <mat-divider></mat-divider>
+
+          <div class="settings-group">
+            <h3>Notifications</h3>
+            <mat-slide-toggle [(ngModel)]="notificationsEnabled" (change)="onNotificationsChange($event.checked)">
+              Activer les notifications
+            </mat-slide-toggle>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </mat-tab>
+  </mat-tab-group>
+</div>

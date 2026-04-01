@@ -1,0 +1,156 @@
+<div class="financial-report-container">
+  <div class="header">
+    <h1>Rapport Financier</h1>
+    <div class="header-actions">
+      <button mat-raised-button color="primary" (click)="exportPDF()">
+        <mat-icon>picture_as_pdf</mat-icon>
+        Export PDF
+      </button>
+      <button mat-raised-button color="accent" (click)="exportExcel()">
+        <mat-icon>table_chart</mat-icon>
+        Export Excel
+      </button>
+    </div>
+  </div>
+
+  <!-- Sélecteur d'année -->
+  <mat-card class="year-selector-card">
+    <mat-form-field appearance="outline">
+      <mat-label>Année cérémoniale</mat-label>
+      <mat-select [(value)]="selectedYearId" (selectionChange)="onYearChange()">
+        <mat-option *ngFor="let year of ceremonialYears" [value]="year.id">
+          {{ year.year }} {{ year.active ? '(Active)' : '' }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </mat-card>
+
+  <div *ngIf="loading" class="loading">
+    <app-loading-spinner></app-loading-spinner>
+  </div>
+
+  <div *ngIf="!loading && report" class="report-content">
+    <!-- Statistiques principales -->
+    <div class="stats-grid">
+      <mat-card class="stat-card">
+        <mat-card-content>
+          <div class="stat-icon income">
+            <mat-icon>trending_up</mat-icon>
+          </div>
+          <div class="stat-info">
+            <p class="stat-label">Total Revenus</p>
+            <h3>{{ report.totalIncome | currencyXof }}</h3>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="stat-card">
+        <mat-card-content>
+          <div class="stat-icon expense">
+            <mat-icon>trending_down</mat-icon>
+          </div>
+          <div class="stat-info">
+            <p class="stat-label">Total Dépenses</p>
+            <h3>{{ report.totalExpense | currencyXof }}</h3>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="stat-card">
+        <mat-card-content>
+          <div class="stat-icon balance">
+            <mat-icon>account_balance</mat-icon>
+          </div>
+          <div class="stat-info">
+            <p class="stat-label">Balance</p>
+            <h3 [class.negative]="report.balance < 0">{{ report.balance | currencyXof }}</h3>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="stat-card">
+        <mat-card-content>
+          <div class="stat-icon budget">
+            <mat-icon>attach_money</mat-icon>
+          </div>
+          <div class="stat-info">
+            <p class="stat-label">Budget Initial</p>
+            <h3>{{ report.initialBudget | currencyXof }}</h3>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <!-- Statistiques cotisations -->
+    <div class="contributions-stats">
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>Statistiques des Cotisations</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="contributions-grid">
+            <div class="contribution-stat">
+              <h4>Total Cotisations</h4>
+              <p>{{ report.totalContributions | currencyXof }}</p>
+            </div>
+            <div class="contribution-stat">
+              <h4>Cotisations Payées</h4>
+              <p>{{ report.paidContributionCount }}</p>
+            </div>
+            <div class="contribution-stat">
+              <h4>Cotisations Non Payées</h4>
+              <p>{{ report.unpaidContributionCount }}</p>
+            </div>
+            <div class="contribution-stat">
+              <h4>Nombre de Transactions</h4>
+              <p>{{ report.transactionCount }}</p>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <!-- Graphique -->
+    <mat-card class="chart-card" *ngIf="pieChartData.datasets[0].data.length > 0">
+      <mat-card-header>
+        <mat-card-title>Dépenses par Catégorie</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="chart-container">
+          <canvas baseChart
+            [data]="pieChartData"
+            [options]="pieChartOptions"
+            type="pie">
+          </canvas>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Transactions récentes -->
+    <mat-card class="recent-transactions">
+      <mat-card-header>
+        <mat-card-title>Transactions Récentes</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="transactions-list">
+          <div *ngFor="let transaction of report.recentTransactions" class="transaction-item">
+            <div class="transaction-info">
+              <span class="description">{{ transaction.description }}</span>
+              <span class="date">{{ transaction.transactionDate | date:'dd/MM/yyyy' }}</span>
+            </div>
+            <div class="transaction-amount">
+              <span [class]="transaction.type === 'SORTIE' ? 'negative' : 'positive'">
+                {{ transaction.type === 'SORTIE' ? '-' : '+' }}{{ transaction.amount | currencyXof }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <div *ngIf="!loading && !report" class="no-data">
+    <mat-icon>info</mat-icon>
+    <p>Aucune donnée disponible pour cette année</p>
+  </div>
+</div>

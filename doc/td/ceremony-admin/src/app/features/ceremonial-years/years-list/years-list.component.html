@@ -1,0 +1,38 @@
+<div class="years-list">
+  <div class="list-header">
+    <h2>Années Cérémoniales</h2>
+    <button mat-raised-button color="primary" (click)="navigateToAdd()">
+      <mat-icon>add</mat-icon> Ajouter une Année
+    </button>
+  </div>
+
+  <app-loading-spinner [isLoading]="loading" message="Chargement..."></app-loading-spinner>
+
+  <div class="years-grid" *ngIf="!loading">
+    <mat-card *ngFor="let year of years" class="year-card" [class.active]="year.active">
+      <mat-card-header>
+        <mat-card-title>{{ year.theme }}</mat-card-title>
+        <mat-card-subtitle>{{ year.startYear }} - {{ year.endYear }}</mat-card-subtitle>
+        <div class="status-indicator">
+          <mat-icon [class.active]="year.active">{{ year.active ? 'lightbulb' : 'lightbulb_outline' }}</mat-icon>
+        </div>
+      </mat-card-header>
+      <mat-card-content>
+        <p><strong>Statut:</strong> {{ year.active ? 'ACTIF' : 'INACTIF' }}</p>
+        <p><strong>Date création:</strong> {{ year.createdAt | date: 'dd/MM/yyyy' }}</p>
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-icon-button color="accent" (click)="activateYear(year)" *ngIf="!year.active" matTooltip="Activer cette année">
+          <mat-icon>power</mat-icon>
+        </button>
+        <button mat-icon-button color="warn" (click)="deleteYear(year)" matTooltip="Supprimer cette année">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+
+  <div *ngIf="!loading && years.length === 0" class="no-data">
+    <p>Aucune année cérémoniale enregistrée</p>
+  </div>
+</div>

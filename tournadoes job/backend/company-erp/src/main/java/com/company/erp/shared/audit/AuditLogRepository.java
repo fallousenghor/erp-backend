@@ -24,4 +24,11 @@ public interface AuditLogRepository extends JpaRepository<AuditLog, UUID> {
     List<AuditLog> findByCreatedAtBetween(LocalDateTime from, LocalDateTime to);
 
     Page<AuditLog> findByAction(String action, Pageable pageable);
+
+    // Additional methods for audit statistics and filtering
+    long countByCreatedAtAfter(LocalDateTime timestamp);
+
+    long countByStatus(String status);
+    
+    Page<AuditLog> findByModule(String module, Pageable pageable);
 }

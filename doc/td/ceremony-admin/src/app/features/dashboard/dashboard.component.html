@@ -1,0 +1,105 @@
+<div class="dashboard-container">
+  <h1>Tableau de Bord</h1>
+
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner></mat-spinner>
+  </div>
+
+  <div *ngIf="!loading && stats" class="stats-grid">
+    <!-- Carte Membres -->
+    <mat-card>
+      <mat-card-header>
+        <mat-icon class="card-icon members">people</mat-icon>
+        <mat-card-title>Membres</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <h2>{{stats.activeMembers}} / {{stats.totalMembers}}</h2>
+        <p class="subtitle">Membres actifs</p>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Carte Balance -->
+    <mat-card>
+      <mat-card-header>
+        <mat-icon class="card-icon balance">account_balance_wallet</mat-icon>
+        <mat-card-title>Balance</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <h2>{{formatCurrency(stats.currentBalance)}}</h2>
+        <p class="subtitle">Solde actuel</p>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Carte Revenus -->
+    <mat-card>
+      <mat-card-header>
+        <mat-icon class="card-icon income">trending_up</mat-icon>
+        <mat-card-title>Revenus</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <h2>{{formatCurrency(stats.totalIncomeThisYear)}}</h2>
+        <p class="subtitle">Cette année</p>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Carte Dépenses -->
+    <mat-card>
+      <mat-card-header>
+        <mat-icon class="card-icon expense">trending_down</mat-icon>
+        <mat-card-title>Dépenses</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <h2>{{formatCurrency(stats.totalExpenseThisYear)}}</h2>
+        <p class="subtitle">Cette année</p>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Carte Événements -->
+    <mat-card>
+      <mat-card-header>
+        <mat-icon class="card-icon events">event</mat-icon>
+        <mat-card-title>Événements</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <h2>{{stats!.upcomingEvents}}</h2>
+        <p class="subtitle">À venir</p>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Carte Cotisations -->
+    <mat-card>
+      <mat-card-header>
+        <mat-icon class="card-icon unpaid">payment</mat-icon>
+        <mat-card-title>Cotisations</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <h2>{{stats!.unpaidContributions}}</h2>
+        <p class="subtitle">Non payées</p>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- Graphique -->
+  <mat-card class="chart-card" *ngIf="!loading">
+    <mat-card-header>
+      <mat-card-title>Évolution Financière</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="chart-container">
+        <canvas baseChart
+          [data]="lineChartData"
+          [options]="lineChartOptions"
+          type="line">
+        </canvas>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Année active -->
+  <div class="active-year" *ngIf="!loading && stats">
+    <mat-chip highlighted>
+      <mat-icon>calendar_today</mat-icon>
+      Année active: {{stats!.activeCeremonialYear}}
+    </mat-chip>
+  </div>
+</div>

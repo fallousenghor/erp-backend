@@ -1,0 +1,25 @@
+@startuml
+title Gestion Documentaire & Rapports
+
+actor Administrateur
+actor Employé
+actor Comptable
+
+usecase "Gérer documents" as UC1
+usecase "Signer document" as UC2
+usecase "Voir dashboard" as UC3
+usecase "Générer rapports" as UC4
+
+Administrateur --> UC1
+Administrateur --> UC2
+Administrateur --> UC3
+Administrateur --> UC4
+
+Employé --> UC1
+Employé --> UC3
+
+Comptable --> UC1
+Comptable --> UC3
+Comptable --> UC4
+
+@enduml

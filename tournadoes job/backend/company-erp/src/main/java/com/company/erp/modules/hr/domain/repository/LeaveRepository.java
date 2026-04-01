@@ -1,7 +1,6 @@
 package com.company.erp.modules.hr.domain.repository;
 
 import com.company.erp.modules.hr.domain.model.LeaveRequest;
-import com.company.erp.modules.hr.application.dto.response.LeaveStatsResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

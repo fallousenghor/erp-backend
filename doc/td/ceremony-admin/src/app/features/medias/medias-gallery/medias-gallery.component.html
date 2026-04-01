@@ -1,0 +1,127 @@
+<div class="medias-container">
+  <div class="header">
+    <h1>Galerie Médias</h1>
+    <button mat-raised-button color="primary" (click)="uploadMedia()">
+      <mat-icon>cloud_upload</mat-icon>
+      Uploader
+    </button>
+  </div>
+
+  <!-- Filtres -->
+  <mat-card class="filters-card">
+    <div class="filters">
+      <mat-chip-listbox [value]="selectedType" (change)="selectedType = $event.value; onTypeChange()">
+        <mat-chip-option *ngFor="let type of mediaTypes" [value]="type.value">
+          <mat-icon>{{type.icon}}</mat-icon>
+          {{type.label}}
+        </mat-chip-option>
+      </mat-chip-listbox>
+
+      <mat-form-field appearance="outline" class="search-field">
+        <mat-label>Rechercher</mat-label>
+        <input matInput [(ngModel)]="searchQuery" (keyup.enter)="onSearch()" 
+               placeholder="Titre, tags...">
+        <mat-icon matPrefix>search</mat-icon>
+        <button mat-icon-button matSuffix (click)="onSearch()">
+          <mat-icon>search</mat-icon>
+        </button>
+      </mat-form-field>
+    </div>
+  </mat-card>
+
+  <div *ngIf="loading" class="loading">
+    <mat-spinner></mat-spinner>
+  </div>
+
+  <!-- Galerie -->
+  <div *ngIf="!loading" class="gallery-grid">
+    <mat-card *ngFor="let media of filteredMedias" 
+              class="media-card" 
+              (click)="viewMedia(media)">
+      
+      <!-- Thumbnail -->
+      <div class="media-thumbnail">
+        <img *ngIf="media.type === 'PHOTO'" 
+             [src]="getSafeImageUrl(media.fileUrl)" 
+             [alt]="media.title"
+             (error)="onImageError(media)"
+             loading="lazy"
+             crossorigin="anonymous">
+        
+        <div *ngIf="media.type === 'VIDEO'" class="video-thumbnail">
+          <img [src]="getSafeImageUrl(media.thumbnailUrl)" 
+               [alt]="media.title"
+               (error)="onImageError(media)"
+               loading="lazy"
+               crossorigin="anonymous">
+          <div class="play-overlay">
+            <mat-icon>play_circle</mat-icon>
+          </div>
+          <span class="duration-badge" *ngIf="media.duration">
+            {{formatDuration(media.duration)}}
+          </span>
+        </div>
+
+        <div *ngIf="media.type === 'AUDIO'" class="audio-thumbnail">
+          <mat-icon class="audio-icon">audiotrack</mat-icon>
+          <span class="duration-badge" *ngIf="media.duration">
+            {{formatDuration(media.duration)}}
+          </span>
+        </div>
+
+        <!-- Type badge -->
+        <mat-chip class="type-badge">
+          <mat-icon>{{getMediaIcon(media.type)}}</mat-icon>
+          {{media.type}}
+        </mat-chip>
+      </div>
+
+      <!-- Info -->
+      <mat-card-content>
+        <h3 class="media-title">{{media.title}}</h3>
+        <p class="media-description" *ngIf="media.description">
+          {{media.description}}
+        </p>
+        
+        <div class="media-meta">
+          <span class="meta-item">
+            <mat-icon>person</mat-icon>
+            {{media.uploadedByName}}
+          </span>
+          <span class="meta-item">
+            <mat-icon>calendar_today</mat-icon>
+            {{media.createdAt | date:'dd/MM/yyyy'}}
+          </span>
+          <span class="meta-item">
+            <mat-icon>data_usage</mat-icon>
+            {{formatFileSize(media.fileSize)}}
+          </span>
+        </div>
+
+        <div class="media-tags" *ngIf="media.tags">
+          <mat-chip *ngFor="let tag of media.tags.split(',')">
+            {{tag.trim()}}
+          </mat-chip>
+        </div>
+      </mat-card-content>
+
+      <!-- Actions -->
+      <mat-card-actions>
+        <button mat-icon-button (click)="downloadMedia(media, $event)">
+          <mat-icon>download</mat-icon>
+        </button>
+        <button mat-icon-button color="warn" (click)="deleteMedia(media, $event)">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </mat-card-actions>
+    </mat-card>
+
+    <div *ngIf="filteredMedias.length === 0" class="empty-state">
+      <mat-icon>photo_library</mat-icon>
+      <p>Aucun média trouvé</p>
+      <button mat-raised-button color="primary" (click)="uploadMedia()">
+        Uploader un média
+      </button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,76 @@
+@startuml usecase-organisation
+title Diagramme de Cas d'Utilisation - Organisation & Inventaire
+left to right direction
+skinparam packageStyle rectangle
+skinparam actorStyle rectangle
+
+actor "Administrateur" as Admin #LightBlue
+actor "Employé" as Employee #LightGreen
+actor "Manager RH" as HR #Orange
+
+package "Gestion des Départements" {
+  usecase "Créer département" as UC_Dept_Create
+  usecase "Consulter départements" as UC_Dept_Read
+  usecase "Modifier département" as UC_Dept_Update
+  usecase "Supprimer département" as UC_Dept_Delete
+  usecase "Mettre à jour budget" as UC_Dept_Budget
+  usecase "Assigner chef département" as UC_Dept_Head
+}
+
+package "Gestion des Positions" {
+  usecase "Créer position" as UC_Pos_Create
+  usecase "Consulter positions" as UC_Pos_Read
+  usecase "Modifier position" as UC_Pos_Update
+}
+
+package "Gestion des Assets" {
+  usecase "Créer asset" as UC_Asset_Create
+  usecase "Consulter assets" as UC_Asset_Read
+  usecase "Modifier asset" as UC_Asset_Update
+  usecase "Assigner asset" as UC_Asset_Assign
+  usecase "Retourner asset" as UC_Asset_Return
+}
+
+package "Gestion de Projets" {
+  usecase "Créer projet" as UC_Project_Create
+  usecase "Consulter projets" as UC_Project_Read
+  usecase "Modifier projet" as UC_Project_Update
+  usecase "Supprimer projet" as UC_Project_Delete
+  usecase "Suivre progression" as UC_Project_Progress
+}
+
+' Relations Administrateur
+Admin --> UC_Dept_Create
+Admin --> UC_Dept_Read
+Admin --> UC_Dept_Update
+Admin --> UC_Dept_Delete
+Admin --> UC_Dept_Budget
+Admin --> UC_Dept_Head
+Admin --> UC_Pos_Create
+Admin --> UC_Pos_Read
+Admin --> UC_Pos_Update
+Admin --> UC_Asset_Create
+Admin --> UC_Asset_Read
+Admin --> UC_Asset_Update
+Admin --> UC_Project_Create
+Admin --> UC_Project_Read
+Admin --> UC_Project_Update
+Admin --> UC_Project_Delete
+Admin --> UC_Project_Progress
+
+' Relations Manager RH
+HR --> UC_Dept_Read
+HR --> UC_Pos_Read
+HR --> UC_Asset_Read
+
+' Relations Employé
+Employee --> UC_Asset_Read
+Employee --> UC_Project_Read
+Employee --> UC_Project_Progress
+
+' Relations Include/Extend
+UC_Dept_Head ..> UC_Dept_Read : <<include>>
+UC_Asset_Assign ..> UC_Asset_Read : <<include>>
+UC_Project_Progress ..> UC_Project_Read : <<include>>
+
+@enduml

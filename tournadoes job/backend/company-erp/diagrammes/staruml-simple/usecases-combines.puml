@@ -1,0 +1,124 @@
+@startuml
+title TOUS LES CAS D'UTILISATION - ERP Entreprise
+
+left to right direction
+
+' === ACTEURS ===
+actor "Administrateur" as Admin #LightBlue
+actor "Employé" as Employee #LightGreen
+actor "Manager RH" as HR #Orange
+actor "Comptable" as Accountant #LightYellow
+actor "Étudiant" as Student #Pink
+actor "Enseignant" as Teacher #Cyan
+actor "Utilisateur" as User #LightGray
+
+' === AUTHENTIFICATION ===
+rectangle "Authentification" {
+  usecase "Se connecter" as UC_Auth_Login
+  usecase "Se déconnecter" as UC_Auth_Logout
+  usecase "Gérer rôles" as UC_Auth_Roles
+  usecase "Gérer permissions" as UC_Auth_Permissions
+}
+
+' === RESSOURCES HUMAINES ===
+rectangle "Ressources Humaines" {
+  usecase "Gérer employés" as UC_RH_Employees
+  usecase "Demander congés" as UC_RH_LeaveRequest
+  usecase "Approuver congés" as UC_RH_LeaveApprove
+  usecase "Enregistrer présence" as UC_RH_Attendance
+  usecase "Évaluer performance" as UC_RH_Performance
+}
+
+' === FINANCE ===
+rectangle "Finance" {
+  usecase "Créer facture" as UC_Fin_Invoice
+  usecase "Payer facture" as UC_Fin_Payment
+  usecase "Soumettre dépense" as UC_Fin_Expense
+  usecase "Approuver dépense" as UC_Fin_ExpenseApprove
+  usecase "Voir tableau de bord" as UC_Fin_Dashboard
+}
+
+' === ÉDUCATION ===
+rectangle "Éducation" {
+  usecase "Gérer étudiants" as UC_Edu_Students
+  usecase "Gérer programmes" as UC_Edu_Programs
+  usecase "S'inscrire au programme" as UC_Edu_Enroll
+  usecase "Saisir notes" as UC_Edu_Grades
+  usecase "Consulter notes" as UC_Edu_ViewGrades
+  usecase "Gérer enseignants" as UC_Edu_Teachers
+}
+
+' === ORGANISATION ===
+rectangle "Organisation" {
+  usecase "Gérer départements" as UC_Org_Departments
+  usecase "Gérer positions" as UC_Org_Positions
+  usecase "Gérer assets" as UC_Org_Assets
+  usecase "Assigner asset" as UC_Org_AssetAssign
+  usecase "Gérer projets" as UC_Org_Projects
+}
+
+' === DOCUMENTS ===
+rectangle "Documents" {
+  usecase "Gérer documents" as UC_Doc_Manage
+  usecase "Signer document" as UC_Doc_Sign
+  usecase "Voir dashboard" as UC_Doc_Dashboard
+  usecase "Générer rapports" as UC_Doc_Reports
+}
+
+' === RELATIONS - AUTHENTIFICATION ===
+User --> UC_Auth_Login
+User --> UC_Auth_Logout
+Admin --> UC_Auth_Login
+Admin --> UC_Auth_Roles
+Admin --> UC_Auth_Permissions
+
+' === RELATIONS - RH ===
+Employee --> UC_RH_Employees
+Employee --> UC_RH_LeaveRequest
+Employee --> UC_RH_Attendance
+HR --> UC_RH_Employees
+HR --> UC_RH_LeaveApprove
+HR --> UC_RH_Performance
+Admin --> UC_RH_Employees
+
+' === RELATIONS - FINANCE ===
+Accountant --> UC_Fin_Invoice
+Accountant --> UC_Fin_Payment
+Accountant --> UC_Fin_ExpenseApprove
+Accountant --> UC_Fin_Dashboard
+Employee --> UC_Fin_Expense
+Admin --> UC_Fin_Dashboard
+
+' === RELATIONS - ÉDUCATION ===
+Student --> UC_Edu_Students
+Student --> UC_Edu_Programs
+Student --> UC_Edu_Enroll
+Student --> UC_Edu_ViewGrades
+Teacher --> UC_Edu_Programs
+Teacher --> UC_Edu_Grades
+Teacher --> UC_Edu_Teachers
+Admin --> UC_Edu_Students
+Admin --> UC_Edu_Programs
+Admin --> UC_Edu_Teachers
+
+' === RELATIONS - ORGANISATION ===
+Admin --> UC_Org_Departments
+Admin --> UC_Org_Positions
+Admin --> UC_Org_Assets
+Admin --> UC_Org_Projects
+Employee --> UC_Org_Projects
+HR --> UC_Org_Departments
+HR --> UC_Org_Assets
+
+' === RELATIONS - DOCUMENTS ===
+Admin --> UC_Doc_Manage
+Admin --> UC_Doc_Sign
+Admin --> UC_Doc_Dashboard
+Admin --> UC_Doc_Reports
+Employee --> UC_Doc_Manage
+Employee --> UC_Doc_Dashboard
+Accountant --> UC_Doc_Manage
+Accountant --> UC_Doc_Dashboard
+Accountant --> UC_Doc_Reports
+
+@enduml

@@ -1,0 +1,132 @@
+@startuml
+title Organisation & Inventaire
+
+' === ENUMS ===
+enum AssetCategory {
+  COMPUTER
+  VEHICLE
+  FURNITURE
+  EQUIPMENT
+  SOFTWARE
+  OTHER
+}
+
+enum AssetStatus {
+  AVAILABLE
+  ASSIGNED
+  IN_REPAIR
+  RETIRED
+}
+
+enum ProjectStatus {
+  PLANNING
+  IN_PROGRESS
+  ON_HOLD
+  COMPLETED
+  CANCELLED
+}
+
+enum ProjectPriority {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+' === CLASSES DE BASE ===
+class BaseEntity {
+  id: UUID
+  createdAt: LocalDateTime
+  updatedAt: LocalDateTime
+}
+
+' === CLASSES METIER ===
+class Department {
+  name: String
+  code: String
+  description: String
+  budget: BigDecimal
+  active: boolean
+  +assignHead(): void
+  +updateBudget(): void
+  +getTotalEmployees(): int
+}
+
+class Position {
+  title: String
+  description: String
+  minSalary: Double
+  maxSalary: Double
+  active: boolean
+  +getSalaryRange(): String
+}
+
+class DepartmentHead {
+  departmentId: UUID
+  employeeId: UUID
+  startDate: LocalDate
+  endDate: LocalDate
+  current: boolean
+  +isCurrent(): boolean
+}
+
+class Asset {
+  assetCode: String
+  name: String
+  category: AssetCategory
+  status: AssetStatus
+  purchasePrice: BigDecimal
+  purchaseDate: LocalDate
+  location: String
+  +assign(): AssetAssignment
+  +returnAsset(): void
+}
+
+class AssetAssignment {
+  assetId: UUID
+  employeeId: UUID
+  assignedDate: LocalDate
+  returnedDate: LocalDate
+  active: boolean
+  +returnAsset(): void
+  +getDuration(): int
+}
+
+class Project {
+  name: String
+  description: String
+  status: ProjectStatus
+  priority: ProjectPriority
+  progress: int
+  startDate: LocalDate
+  endDate: LocalDate
+  budget: BigDecimal
+  +updateProgress(): void
+  +updateStatus(): void
+  +isOverdue(): boolean
+}
+
+' === HERITAGE ===
+BaseEntity <|-- Department
+BaseEntity <|-- Position
+BaseEntity <|-- DepartmentHead
+BaseEntity <|-- Asset
+BaseEntity <|-- AssetAssignment
+BaseEntity <|-- Project
+
+' === RELATIONS ===
+Department "1" *-- "0..*" Position : "positions"
+Department "1" *-- "0..*" DepartmentHead : "heads"
+Asset "1" *-- "0..*" AssetAssignment : "assignments"
+
+note right of Department
+  Gère les départements
+  et leurs budgets
+end note
+
+note left of Asset
+  Cycle de vie :
+  AVAILABLE → ASSIGNED → RETURNED
+end note
+
+@enduml

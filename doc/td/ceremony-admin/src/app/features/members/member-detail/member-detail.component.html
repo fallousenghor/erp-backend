@@ -1,0 +1,156 @@
+<div class="member-detail-container">
+  <div class="header-actions">
+    <button mat-icon-button (click)="back()">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <h1>Détails du Membre</h1>
+    <div class="spacer"></div>
+    <button mat-raised-button color="primary" (click)="editMember()">
+      <mat-icon>edit</mat-icon>
+      Modifier
+    </button>
+    <button mat-raised-button (click)="downloadBadge()">
+      <mat-icon>badge</mat-icon>
+      Télécharger Badge
+    </button>
+  </div>
+
+  <div *ngIf="loading" class="loading">
+    <mat-spinner></mat-spinner>
+  </div>
+
+  <div *ngIf="!loading && member" class="content-grid">
+    
+    <!-- Carte Profil -->
+    <mat-card class="profile-card">
+      <mat-card-content>
+        <div class="profile-header">
+          <img [src]="member.photoUrl || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxjaXJjbGUgY3g9IjUwIiBjeT0iNTAiIHI9IjUwIiBmaWxsPSIjRjVGNUY1Ii8+CjxjaXJjbGUgY3g9IjUwIiBjeT0iMzUiIHI9IjE1IiBmaWxsPSIjQzRDNEM0Ii8+CjxwYXRoIGQ9Ik0yMCA4NWMwLTE1IDEyLjUtMjcuNSAyOC0yNy41czI4IDEyLjUgMjggMjcuNSIgc3Ryb2tlPSIjQzRDNEM0IiBzdHJva2Utd2lkdGg9IjQiIGZpbGw9Im5vbmUiLz4KPC9zdmc+'"
+               alt="Photo" class="profile-photo">
+          <div class="profile-info">
+            <h2>{{member.firstName}} {{member.lastName}}</h2>
+            <p class="member-number">{{member.memberNumber}}</p>
+            <mat-chip [color]="member.active ? 'primary' : 'warn'">
+              {{member.active ? 'Actif' : 'Inactif'}}
+            </mat-chip>
+          </div>
+        </div>
+
+        <mat-divider></mat-divider>
+
+        <div class="info-section">
+          <h3>Informations Personnelles</h3>
+          <div class="info-item">
+            <mat-icon>phone</mat-icon>
+            <span>{{member.phoneNumber}}</span>
+          </div>
+          <div class="info-item" *ngIf="member.email">
+            <mat-icon>email</mat-icon>
+            <span>{{member.email}}</span>
+          </div>
+          <div class="info-item" *ngIf="member.dateOfBirth">
+            <mat-icon>cake</mat-icon>
+            <span>{{member.dateOfBirth | date:'dd/MM/yyyy'}}</span>
+          </div>
+          <div class="info-item" *ngIf="member.address">
+            <mat-icon>home</mat-icon>
+            <span>{{member.address}}</span>
+          </div>
+        </div>
+
+        <mat-divider></mat-divider>
+
+        <div class="info-section" *ngIf="member.emergencyContact">
+          <h3>Contact d'Urgence</h3>
+          <div class="info-item">
+            <mat-icon>contact_emergency</mat-icon>
+            <span>{{member.emergencyContact}}</span>
+          </div>
+          <div class="info-item" *ngIf="member.emergencyPhone">
+            <mat-icon>phone</mat-icon>
+            <span>{{member.emergencyPhone}}</span>
+          </div>
+        </div>
+
+        <mat-divider></mat-divider>
+
+        <div class="info-section">
+          <h3>Badge</h3>
+          <div class="badge-info" *ngIf="member.badge">
+            <p><strong>Numéro:</strong> {{member.badge.badgeNumber}}</p>
+            <p><strong>Date d'émission:</strong> {{member.badge.issueDate | date:'dd/MM/yyyy'}}</p>
+            <p><strong>Expiration:</strong> {{member.badge.expiryDate | date:'dd/MM/yyyy'}}</p>
+          </div>
+          <p *ngIf="!member.badge">Badge non généré</p>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Carte Cotisations -->
+    <mat-card class="contributions-card">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>payments</mat-icon>
+          Historique Cotisations
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div *ngIf="contributions.length === 0" class="empty-state">
+          <mat-icon>receipt_long</mat-icon>
+          <p>Aucune cotisation</p>
+        </div>
+
+        <div class="contributions-list" *ngIf="contributions.length > 0">
+          <div class="contribution-item" *ngFor="let contrib of contributions">
+            <div class="contribution-header">
+              <span class="year">{{contrib.ceremonialYear}}</span>
+              <mat-chip [color]="contrib.status === 'PAYE' ? 'primary' : 'warn'">
+                {{contrib.status}}
+              </mat-chip>
+            </div>
+            <div class="contribution-details">
+              <p><strong>Montant:</strong> {{contrib.expectedAmount | currency:'XOF'}}</p>
+              <p><strong>Payé:</strong> {{contrib.paidAmount | currency:'XOF'}}</p>
+              <p *ngIf="contrib.paymentDate">
+                <strong>Date:</strong> {{contrib.paymentDate | date:'dd/MM/yyyy'}}
+              </p>
+            </div>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Carte Paiements -->
+    <mat-card class="payments-card">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>account_balance_wallet</mat-icon>
+          Historique Paiements
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div *ngIf="payments.length === 0" class="empty-state">
+          <mat-icon>money_off</mat-icon>
+          <p>Aucun paiement</p>
+        </div>
+
+        <div class="payments-list" *ngIf="payments.length > 0">
+          <div class="payment-item" *ngFor="let payment of payments">
+            <div class="payment-header">
+              <span class="reference">{{payment.transactionReference}}</span>
+              <mat-chip [color]="payment.status === 'REUSSI' ? 'primary' : 'warn'">
+                {{payment.status}}
+              </mat-chip>
+            </div>
+            <div class="payment-details">
+              <p><strong>Montant:</strong> {{payment.amount | currency:'XOF'}}</p>
+              <p><strong>Méthode:</strong> {{payment.paymentMethod}}</p>
+              <p><strong>Date:</strong> {{payment.initiatedAt | date:'dd/MM/yyyy HH:mm'}}</p>
+            </div>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+  </div>
+</div>

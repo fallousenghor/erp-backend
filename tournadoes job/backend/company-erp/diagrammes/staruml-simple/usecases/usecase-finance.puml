@@ -1,0 +1,23 @@
+@startuml
+title Finance & Comptabilité
+
+actor Comptable
+actor Administrateur
+actor Employé
+
+usecase "Créer facture" as UC1
+usecase "Payer facture" as UC2
+usecase "Soumettre dépense" as UC3
+usecase "Approuver dépense" as UC4
+usecase "Voir tableau de bord" as UC5
+
+Comptable --> UC1
+Comptable --> UC2
+Comptable --> UC4
+Comptable --> UC5
+
+Employé --> UC3
+
+Administrateur --> UC5
+
+@enduml

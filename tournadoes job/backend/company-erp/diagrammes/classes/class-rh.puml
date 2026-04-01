@@ -1,0 +1,117 @@
+@startuml class-rh
+title Diagramme de Classes - Gestion des Ressources Humaines
+skinparam classAttributeIconSize 0
+skinparam class {
+  BackgroundColor White
+  BorderColor Black
+}
+
+package "Ressources Humaines" {
+  class Employee {
+    -id: UUID
+    -employeeNumber: String
+    -firstName: String
+    -lastName: String
+    -email: String
+    -hireDate: LocalDate
+    -status: EmployeeStatus
+    -departmentId: UUID
+    -positionId: UUID
+    -leaveBalance: int
+    -photoUrl: String
+    +requestLeave(LeaveRequest): LeaveRequest
+    +terminate(): void
+  }
+  
+  class LeaveRequest {
+    -id: UUID
+    -employeeId: UUID
+    -leaveType: String
+    -startDate: LocalDate
+    -endDate: LocalDate
+    -daysRequested: int
+    -reason: String
+    -status: String
+    +approve(): void
+    +reject(String): void
+  }
+  
+  class Attendance {
+    -id: UUID
+    -employeeId: UUID
+    -attendanceDate: LocalDate
+    -checkIn: LocalTime
+    -checkOut: LocalTime
+    -status: AttendanceStatus
+    +checkIn(LocalTime): void
+    +checkOut(LocalTime): void
+  }
+  
+  class PerformanceReview {
+    -id: UUID
+    -employeeId: UUID
+    -period: String
+    -rating: double
+    -feedback: String
+    -status: ReviewStatus
+    +updateRating(double): void
+  }
+  
+  class Objective {
+    -id: UUID
+    -employeeId: UUID
+    -title: String
+    -target: int
+    -achieved: int
+    -status: ObjectiveStatus
+    -dueDate: LocalDate
+    +updateProgress(int): void
+  }
+  
+  class Salary {
+    -amount: BigDecimal
+    -currency: String
+    -payPeriod: String
+  }
+}
+
+class BaseEntity {
+  -id: UUID
+  -createdAt: LocalDateTime
+  -updatedAt: LocalDateTime
+}
+
+class BaseAuditEntity {
+  -createdBy: String
+  -updatedBy: String
+}
+
+' Relations
+BaseEntity <|-- Employee
+BaseEntity <|-- LeaveRequest
+BaseEntity <|-- Attendance
+BaseEntity <|-- PerformanceReview
+BaseEntity <|-- Objective
+BaseAuditEntity <|-- Employee
+BaseAuditEntity <|-- LeaveRequest
+BaseAuditEntity <|-- Attendance
+BaseAuditEntity <|-- PerformanceReview
+BaseAuditEntity <|-- Objective
+
+Employee "1" *-- "1" Salary : salary >
+Employee "1" --> "0..*" LeaveRequest : requests >
+Employee "1" --> "0..*" Attendance : attendances >
+Employee "1" --> "0..*" PerformanceReview : reviews >
+Employee "1" --> "0..*" Objective : objectives >
+
+note right of Employee
+  Représente un employé
+  de l'entreprise
+end note
+
+note right of LeaveRequest
+  Cycle de vie: PENDING →
+  APPROVED ou REJECTED
+end note
+
+@enduml

@@ -1,0 +1,83 @@
+@startuml class-authentification
+title Diagramme de Classes - Authentification & Sécurité
+skinparam classAttributeIconSize 0
+skinparam class {
+  BackgroundColor White
+  BorderColor Black
+}
+
+package "Authentification" {
+  class User {
+    -id: UUID
+    -username: String
+    -email: String
+    -password: String
+    -firstName: String
+    -lastName: String
+    -enabled: boolean
+    -locked: boolean
+    -failedAttempts: int
+    -lastLogin: LocalDateTime
+    +login(): String
+    +logout(): void
+    +assignRole(Role): void
+  }
+  
+  class Role {
+    -id: UUID
+    -name: String
+    -description: String
+    +assignPermission(Permission): void
+    +removePermission(Permission): void
+  }
+  
+  class Permission {
+    -id: UUID
+    -name: String
+    -description: String
+  }
+  
+  class RefreshToken {
+    -id: UUID
+    -token: String
+    -expiresAt: LocalDateTime
+    -revoked: boolean
+    +isExpired(): boolean
+    +revoke(): void
+  }
+}
+
+class BaseEntity {
+  -id: UUID
+  -createdAt: LocalDateTime
+  -updatedAt: LocalDateTime
+  -version: Long
+}
+
+class BaseAuditEntity {
+  -createdBy: String
+  -updatedBy: String
+}
+
+' Relations
+BaseEntity <|-- User
+BaseEntity <|-- Role
+BaseEntity <|-- Permission
+BaseEntity <|-- RefreshToken
+BaseAuditEntity <|-- User
+
+User "1" *-- "0..*" Role : roles >
+Role "1" *-- "0..*" Permission : permissions >
+User "1" *-- "0..*" RefreshToken : tokens >
+
+note right of User
+  Gère l'authentification
+  et les sessions utilisateurs
+end note
+
+note right of Role
+  Définit les rôles comme
+  ADMIN, EMPLOYEE, MANAGER
+end note
+
+@enduml

@@ -1,0 +1,110 @@
+<div class="event-form-container">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>
+        <h2>{{ isEditMode ? 'Modifier l\'Événement' : 'Nouvel Événement' }}</h2>
+      </mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content>
+      <form [formGroup]="eventForm" (ngSubmit)="onSubmit()">
+        <div class="form-grid">
+          
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Titre</mat-label>
+            <input matInput formControlName="title">
+            <mat-icon matPrefix>title</mat-icon>
+            <mat-error *ngIf="f['title'].hasError('required')">
+              Le titre est requis
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Type d'événement</mat-label>
+            <mat-select formControlName="type">
+              <mat-option *ngFor="let type of eventTypes" [value]="type.value">
+                {{type.label}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Année Cérémoniale</mat-label>
+            <mat-select formControlName="ceremonialYearId">
+              <mat-option *ngFor="let year of ceremonialYears" [value]="year.id">
+                {{year.year}} - {{year.theme}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Date de début</mat-label>
+            <input matInput [matDatepicker]="startPicker" formControlName="startDate">
+            <mat-datepicker-toggle matPrefix [for]="startPicker"></mat-datepicker-toggle>
+            <mat-datepicker #startPicker></mat-datepicker>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Date de fin (optionnel)</mat-label>
+            <input matInput [matDatepicker]="endPicker" formControlName="endDate">
+            <mat-datepicker-toggle matPrefix [for]="endPicker"></mat-datepicker-toggle>
+            <mat-datepicker #endPicker></mat-datepicker>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Lieu</mat-label>
+            <input matInput formControlName="location">
+            <mat-icon matPrefix>place</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Adresse complète</mat-label>
+            <textarea matInput formControlName="address" rows="2"></textarea>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Description</mat-label>
+            <textarea matInput formControlName="description" rows="4"></textarea>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Date de rappel</mat-label>
+            <input matInput [matDatepicker]="reminderPicker" formControlName="reminderDate">
+            <mat-datepicker-toggle matPrefix [for]="reminderPicker"></mat-datepicker-toggle>
+            <mat-datepicker #reminderPicker></mat-datepicker>
+            <mat-hint>Date d'envoi du rappel automatique</mat-hint>
+          </mat-form-field>
+
+        </div>
+
+        <!-- Participants -->
+        <div class="participants-section">
+          <h3>Participants</h3>
+          <div class="participants-grid">
+            <mat-chip-listbox multiple>
+              <mat-chip-option *ngFor="let member of members"
+                               [selected]="isParticipantSelected(member)"
+                               (click)="toggleParticipant(member)">
+                {{member.firstName}} {{member.lastName}}
+              </mat-chip-option>
+            </mat-chip-listbox>
+          </div>
+          <p class="participants-count">
+            {{selectedParticipants.length}} participant(s) sélectionné(s)
+          </p>
+        </div>
+
+        <!-- Actions -->
+        <div class="form-actions">
+          <button mat-button type="button" (click)="cancel()">
+            Annuler
+          </button>
+          <button mat-raised-button color="primary" type="submit" [disabled]="loading">
+            <mat-spinner *ngIf="loading" diameter="20"></mat-spinner>
+            <span *ngIf="!loading">{{ isEditMode ? 'Modifier' : 'Créer' }}</span>
+          </button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>

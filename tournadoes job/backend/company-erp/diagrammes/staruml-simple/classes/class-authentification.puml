@@ -1,0 +1,90 @@
+@startuml
+title Authentification & Sécurité
+
+' === ENUMS ===
+enum RoleType {
+  ADMIN
+  EMPLOYEE
+  MANAGER
+  HR
+  ACCOUNTANT
+  TEACHER
+  STUDENT
+}
+
+enum PermissionType {
+  READ
+  WRITE
+  DELETE
+  ADMIN
+}
+
+' === CLASSES DE BASE ===
+class BaseEntity {
+  id: UUID
+  createdAt: LocalDateTime
+  updatedAt: LocalDateTime
+}
+
+' === CLASSES METIER ===
+class User {
+  username: String
+  email: String
+  password: String
+  firstName: String
+  lastName: String
+  enabled: boolean
+  locked: boolean
+  failedAttempts: int
+  lastLogin: LocalDateTime
+  +login(): String
+  +logout(): void
+  +getFullName(): String
+}
+
+class Role {
+  name: RoleType
+  description: String
+  +assignPermission(): void
+  +removePermission(): void
+  +hasPermission(): boolean
+}
+
+class Permission {
+  name: PermissionType
+  resource: String
+  description: String
+  +matches(): boolean
+}
+
+class RefreshToken {
+  token: String
+  expiresAt: LocalDateTime
+  revoked: boolean
+  userId: UUID
+  +isExpired(): boolean
+  +revoke(): void
+}
+
+' === HERITAGE ===
+BaseEntity <|-- User
+BaseEntity <|-- Role
+BaseEntity <|-- Permission
+BaseEntity <|-- RefreshToken
+
+' === RELATIONS ===
+User "1" *-- "0..*" Role : "roles"
+Role "1" *-- "0..*" Permission : "permissions"
+User "1" *-- "0..*" RefreshToken : "tokens"
+
+note right of User
+  Gère l'authentification
+  et les sessions
+end note
+
+note right of Role
+  Enum RoleType pour
+  les rôles prédéfinis
+end note
+
+@enduml

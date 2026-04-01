@@ -1,0 +1,71 @@
+@startuml class-documents
+title Diagramme de Classes - Documents & Comptabilité
+skinparam classAttributeIconSize 0
+skinparam class {
+  BackgroundColor White
+  BorderColor Black
+}
+
+package "Documents" {
+  class Document {
+    -id: UUID
+    -name: String
+    -description: String
+    -type: DocumentType
+    -category: DocumentCategory
+    -status: DocumentStatus
+    -signatureRequired: boolean
+    -fileUrl: String
+    -uploadedBy: String
+    -expiresAt: LocalDateTime
+    +addSignature(String): void
+    +updateStatus(DocumentStatus): void
+  }
+}
+
+package "Comptabilité" {
+  class JournalEntry {
+    -id: UUID
+    -reference: String
+    -entryDate: LocalDateTime
+    -description: String
+    -debitAmount: BigDecimal
+    -creditAmount: BigDecimal
+    -accountCode: String
+    -accountName: String
+    -type: JournalEntryType
+    +validate(): boolean
+  }
+}
+
+class BaseEntity {
+  -id: UUID
+  -createdAt: LocalDateTime
+  -updatedAt: LocalDateTime
+  -version: Long
+}
+
+class BaseAuditEntity {
+  -createdBy: String
+  -updatedBy: String
+}
+
+' Relations
+BaseEntity <|-- Document
+BaseEntity <|-- JournalEntry
+BaseAuditEntity <|-- Document
+
+note right of Document
+  Types: CONTRACT, INVOICE,
+  DIPLOMA, REPORT, etc.
+  
+  Statuts: DRAFT →
+  PENDING_SIGNATURE → SIGNED
+end note
+
+note right of JournalEntry
+  Écriture comptable en
+  partie double
+end note
+
+@enduml

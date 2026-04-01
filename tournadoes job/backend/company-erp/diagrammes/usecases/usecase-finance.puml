@@ -1,0 +1,80 @@
+@startuml usecase-finance
+title Diagramme de Cas d'Utilisation - Finance & Comptabilité
+left to right direction
+skinparam packageStyle rectangle
+skinparam actorStyle rectangle
+
+actor "Comptable" as Accountant #LightYellow
+actor "Administrateur" as Admin #LightBlue
+actor "Employé" as Employee #LightGreen
+
+package "Gestion des Factures" {
+  usecase "Créer une facture" as UC_Invoice_Create
+  usecase "Modifier une facture" as UC_Invoice_Update
+  usecase "Consulter factures" as UC_Invoice_Read
+  usecase "Supprimer facture" as UC_Invoice_Delete
+  usecase "Envoyer facture" as UC_Invoice_Send
+  usecase "Annuler facture" as UC_Invoice_Cancel
+}
+
+package "Gestion des Paiements" {
+  usecase "Enregistrer paiement" as UC_Payment_Create
+  usecase "Consulter paiements" as UC_Payment_Read
+}
+
+package "Gestion des Dépenses" {
+  usecase "Soumettre dépense" as UC_Expense_Submit
+  usecase "Consulter dépenses" as UC_Expense_Read
+  usecase "Approuver dépense" as UC_Expense_Approve
+  usecase "Rejeter dépense" as UC_Expense_Reject
+  usecase "Résumé dépenses" as UC_Expense_Summary
+}
+
+package "Comptabilité" {
+  usecase "Créer écriture comptable" as UC_Journal_Create
+  usecase "Consulter écritures" as UC_Journal_Read
+  usecase "Modifier écriture" as UC_Journal_Update
+  usecase "Supprimer écriture" as UC_Journal_Delete
+}
+
+package "Tableau de Bord" {
+  usecase "Voir résumé financier" as UC_Dashboard_Finance
+  usecase "Voir revenus" as UC_Dashboard_Revenue
+  usecase "Voir flux trésorerie" as UC_Dashboard_Cashflow
+}
+
+' Relations Comptable
+Accountant --> UC_Invoice_Create
+Accountant --> UC_Invoice_Update
+Accountant --> UC_Invoice_Read
+Accountant --> UC_Invoice_Delete
+Accountant --> UC_Invoice_Send
+Accountant --> UC_Invoice_Cancel
+Accountant --> UC_Payment_Create
+Accountant --> UC_Payment_Read
+Accountant --> UC_Expense_Read
+Accountant --> UC_Expense_Approve
+Accountant --> UC_Expense_Reject
+Accountant --> UC_Expense_Summary
+Accountant --> UC_Journal_Create
+Accountant --> UC_Journal_Read
+Accountant --> UC_Journal_Update
+Accountant --> UC_Journal_Delete
+Accountant --> UC_Dashboard_Finance
+Accountant --> UC_Dashboard_Revenue
+Accountant --> UC_Dashboard_Cashflow
+
+' Relations Employé
+Employee --> UC_Expense_Submit
+Employee --> UC_Expense_Read
+
+' Relations Admin
+Admin --> UC_Invoice_Read
+Admin --> UC_Dashboard_Finance
+
+' Relations Include/Extend
+UC_Invoice_Create ..> UC_Payment_Create : <<include>>
+UC_Invoice_Send ..> UC_Invoice_Read : <<include>>
+UC_Expense_Submit ..> UC_Expense_Read : <<extend>>
+
+@enduml

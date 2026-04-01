@@ -1,0 +1,31 @@
+<mat-toolbar color="primary" class="navbar">
+  <button mat-icon-button (click)="toggleSidebar()">
+    <mat-icon>menu</mat-icon>
+  </button>
+
+  <span class="navbar-title">Ceremony Admin</span>
+
+  <span class="spacer"></span>
+
+  <div class="navbar-actions">
+    <button mat-icon-button [matMenuTriggerFor]="menu">
+      <mat-icon>account_circle</mat-icon>
+    </button>
+
+    <mat-menu #menu="matMenu">
+      <button mat-menu-item>
+        <mat-icon>person</mat-icon>
+        <span>Mon Profil</span>
+      </button>
+      <button mat-menu-item>
+        <mat-icon>settings</mat-icon>
+        <span>Paramètres</span>
+      </button>
+      <mat-divider></mat-divider>
+      <button mat-menu-item (click)="logout()">
+        <mat-icon>exit_to_app</mat-icon>
+        <span>Déconnexion</span>
+      </button>
+    </mat-menu>
+  </div>
+</mat-toolbar>

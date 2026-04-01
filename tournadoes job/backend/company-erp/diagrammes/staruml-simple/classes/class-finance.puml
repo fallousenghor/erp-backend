@@ -1,0 +1,118 @@
+@startuml
+title Finance & Comptabilité
+
+' === ENUMS ===
+enum InvoiceStatus {
+  DRAFT
+  SENT
+  PAID
+  OVERDUE
+  CANCELLED
+}
+
+enum PaymentMethod {
+  CASH
+  BANK_TRANSFER
+  CREDIT_CARD
+  CHECK
+}
+
+enum ExpenseCategory {
+  SALARY
+  RENT
+  UTILITIES
+  TRAVEL
+  EQUIPMENT
+  OTHER
+}
+
+enum ExpenseStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  PAID
+}
+
+' === CLASSES DE BASE ===
+class BaseEntity {
+  id: UUID
+  createdAt: LocalDateTime
+  updatedAt: LocalDateTime
+}
+
+class Money {
+  amount: BigDecimal
+  currency: String
+  +add(): Money
+  +subtract(): Money
+  +multiply(): Money
+}
+
+' === CLASSES METIER ===
+class Invoice {
+  invoiceNumber: String
+  clientName: String
+  issueDate: LocalDate
+  dueDate: LocalDate
+  status: InvoiceStatus
+  subtotal: BigDecimal
+  taxAmount: BigDecimal
+  total: BigDecimal
+  +addItem(): void
+  +send(): void
+  +cancel(): void
+  +calculateTotal(): BigDecimal
+}
+
+class InvoiceItem {
+  description: String
+  quantity: int
+  unitPrice: BigDecimal
+  lineTotal: BigDecimal
+  +calculateTotal(): BigDecimal
+}
+
+class Payment {
+  invoiceId: UUID
+  amount: Money
+  paymentMethod: PaymentMethod
+  paymentDate: LocalDate
+  reference: String
+  +process(): void
+  +refund(): void
+}
+
+class Expense {
+  title: String
+  category: ExpenseCategory
+  amount: Money
+  expenseDate: LocalDate
+  status: ExpenseStatus
+  submittedById: UUID
+  +submit(): void
+  +approve(): void
+  +reject(): void
+}
+
+' === HERITAGE ===
+BaseEntity <|-- Invoice
+BaseEntity <|-- InvoiceItem
+BaseEntity <|-- Payment
+BaseEntity <|-- Expense
+
+' === RELATIONS ===
+Invoice "1" *-- "1..*" InvoiceItem : "items"
+Invoice "1" *-- "0..*" Payment : "payments"
+Expense "1" *-- "1" Money : "amount"
+
+note right of Invoice
+  Cycle de vie :
+  DRAFT → SENT → PAID
+end note
+
+note left of Money
+  Value Object
+  Opérations monétaires
+end note
+
+@enduml

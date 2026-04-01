@@ -1,0 +1,76 @@
+@startuml usecase-rh
+title Diagramme de Cas d'Utilisation - Gestion des Ressources Humaines
+left to right direction
+skinparam packageStyle rectangle
+skinparam actorStyle rectangle
+
+actor "Employé" as Employee #LightGreen
+actor "Manager RH" as HR #Orange
+actor "Administrateur" as Admin #LightBlue
+
+package "Gestion des Employés" {
+  usecase "Créer un employé" as UC_Emp_Create
+  usecase "Modifier un employé" as UC_Emp_Update
+  usecase "Consulter un employé" as UC_Emp_Read
+  usecase "Supprimer un employé" as UC_Emp_Delete
+  usecase "Uploader une photo" as UC_Emp_Photo
+  usecase "Générer QR Code" as UC_Emp_QR
+}
+
+package "Gestion des Congés" {
+  usecase "Demander un congé" as UC_Leave_Request
+  usecase "Consulter ses congés" as UC_Leave_Read
+  usecase "Approuver un congé" as UC_Leave_Approve
+  usecase "Rejeter un congé" as UC_Leave_Reject
+  usecase "Consulter les soldes" as UC_Leave_Balance
+}
+
+package "Gestion des Présences" {
+  usecase "Enregistrer la présence" as UC_Attendance_Create
+  usecase "Consulter les présences" as UC_Attendance_Read
+  usecase "Modifier une présence" as UC_Attendance_Update
+  usecase "Générer statistiques" as UC_Attendance_Stats
+}
+
+package "Évaluation Performance" {
+  usecase "Créer une évaluation" as UC_Perf_Create
+  usecase "Consulter évaluations" as UC_Perf_Read
+  usecase "Définir objectifs" as UC_Objective_Create
+  usecase "Suivre objectifs" as UC_Objective_Follow
+}
+
+' Relations Employé
+Employee --> UC_Emp_Read
+Employee --> UC_Leave_Request
+Employee --> UC_Leave_Read
+Employee --> UC_Leave_Balance
+Employee --> UC_Attendance_Create
+Employee --> UC_Attendance_Read
+Employee --> UC_Perf_Read
+Employee --> UC_Objective_Follow
+
+' Relations Manager RH
+HR --> UC_Emp_Create
+HR --> UC_Emp_Update
+HR --> UC_Emp_Read
+HR --> UC_Emp_Delete
+HR --> UC_Emp_Photo
+HR --> UC_Emp_QR
+HR --> UC_Leave_Approve
+HR --> UC_Leave_Reject
+HR --> UC_Leave_Read
+HR --> UC_Attendance_Read
+HR --> UC_Attendance_Stats
+HR --> UC_Perf_Create
+HR --> UC_Perf_Read
+HR --> UC_Objective_Create
+
+' Relations Admin
+Admin --> UC_Emp_Read
+
+' Relations Include/Extend
+UC_Leave_Request ..> UC_Leave_Balance : <<include>>
+UC_Leave_Approve ..> UC_Leave_Read : <<include>>
+UC_Perf_Create ..> UC_Objective_Create : <<include>>
+
+@enduml

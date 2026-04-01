@@ -1,0 +1,101 @@
+@startuml class-finance
+title Diagramme de Classes - Finance & Comptabilité
+skinparam classAttributeIconSize 0
+skinparam class {
+  BackgroundColor White
+  BorderColor Black
+}
+
+package "Finance" {
+  class Invoice {
+    -id: UUID
+    -invoiceNumber: String
+    -clientName: String
+    -issueDate: LocalDate
+    -dueDate: LocalDate
+    -status: InvoiceStatus
+    -currency: String
+    -subtotal: BigDecimal
+    -taxAmount: BigDecimal
+    -total: BigDecimal
+    +addItem(InvoiceItem): void
+    +send(): void
+    +cancel(): void
+    +calculateTotal(): BigDecimal
+  }
+  
+  class InvoiceItem {
+    -id: UUID
+    -description: String
+    -quantity: int
+    -unitPrice: BigDecimal
+    -lineTotal: BigDecimal
+    +calculateTotal(): BigDecimal
+  }
+  
+  class Payment {
+    -id: UUID
+    -invoiceId: UUID
+    -amount: Money
+    -paymentMethod: PaymentMethod
+    -paymentDate: LocalDate
+    -reference: String
+    +process(): void
+  }
+  
+  class Expense {
+    -id: UUID
+    -title: String
+    -category: ExpenseCategory
+    -amount: Money
+    -expenseDate: LocalDate
+    -status: ExpenseStatus
+    -submittedById: UUID
+    +submit(): void
+    +approve(): void
+    +reject(): void
+  }
+  
+  class Money {
+    -amount: BigDecimal
+    -currency: String
+    +add(Money): Money
+    +subtract(Money): Money
+  }
+}
+
+class BaseEntity {
+  -id: UUID
+  -createdAt: LocalDateTime
+  -updatedAt: LocalDateTime
+}
+
+class BaseAuditEntity {
+  -createdBy: String
+  -updatedBy: String
+}
+
+' Relations
+BaseEntity <|-- Invoice
+BaseEntity <|-- InvoiceItem
+BaseEntity <|-- Payment
+BaseEntity <|-- Expense
+BaseAuditEntity <|-- Invoice
+BaseAuditEntity <|-- Payment
+BaseAuditEntity <|-- Expense
+
+Invoice "1" *-- "1..*" InvoiceItem : items >
+Invoice "1" *-- "0..*" Payment : payments >
+Payment "0..*" --> "1" Invoice : invoice >
+
+note right of Invoice
+  Statuts: DRAFT → SENT →
+  PAID ou CANCELLED
+end note
+
+note right of Expense
+  Catégories: SALARY, RENT,
+  UTILITIES, TRAVEL, etc.
+end note
+
+@enduml

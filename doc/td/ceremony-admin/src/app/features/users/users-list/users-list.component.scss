@@ -1,0 +1,23 @@
+.users-container {
+  padding: 20px;
+}
+
+.actions-card {
+  margin-bottom: 20px;
+  padding: 15px;
+}
+
+.table-card {
+  overflow-x: auto;
+}
+
+.users-table {
+  width: 100%;
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 300px;
+}

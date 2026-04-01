@@ -1,0 +1,47 @@
+<div class="media-viewer">
+  <app-loading-spinner [isLoading]="loading" message="Chargement du média..."></app-loading-spinner>
+
+  <div *ngIf="!loading && media" class="viewer-container">
+    <div class="viewer-header">
+      <button mat-icon-button matTooltip="Retour" (click)="goBack()">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <h2>{{ media.title }}</h2>
+      <button mat-icon-button (click)="downloadMedia()">
+        <mat-icon>download</mat-icon>
+      </button>
+    </div>
+
+    <div class="media-content">
+      <img *ngIf="isImage()" [src]="media.url" [alt]="media.title" class="media-image">
+      <video *ngIf="isVideo()" [src]="media.url" controls class="media-video"></video>
+      <audio *ngIf="isAudio()" [src]="media.url" controls class="media-audio"></audio>
+      <iframe *ngIf="isPdf()" [src]="media.url | safe:'resourceUrl'" class="media-pdf"></iframe>
+    </div>
+
+    <mat-card class="media-info">
+      <mat-card-content>
+        <div class="info-row">
+          <strong>Type:</strong>
+          <span>{{ media.type }}</span>
+        </div>
+        <div class="info-row">
+          <strong>Date d'ajout:</strong>
+          <span>{{ media.uploadedAt | date: 'dd/MM/yyyy HH:mm' }}</span>
+        </div>
+        <div class="info-row">
+          <strong>Taille:</strong>
+          <span>{{ media.size | number }}</span>
+        </div>
+        <div class="info-row">
+          <strong>Description:</strong>
+          <span>{{ media.description }}</span>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <div *ngIf="!loading && !media" class="no-data">
+    <p>Média non trouvé</p>
+  </div>
+</div>

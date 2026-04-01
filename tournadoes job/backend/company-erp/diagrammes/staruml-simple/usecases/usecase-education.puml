@@ -1,0 +1,28 @@
+@startuml
+title Formation & Éducation
+
+actor Étudiant
+actor Enseignant
+actor Administrateur
+
+usecase "Gérer étudiants" as UC1
+usecase "Gérer programmes" as UC2
+usecase "S'inscrire au programme" as UC3
+usecase "Saisir notes" as UC4
+usecase "Consulter notes" as UC5
+usecase "Gérer enseignants" as UC6
+
+Étudiant --> UC1
+Étudiant --> UC2
+Étudiant --> UC3
+Étudiant --> UC5
+
+Enseignant --> UC2
+Enseignant --> UC4
+Enseignant --> UC6
+
+Administrateur --> UC1
+Administrateur --> UC2
+Administrateur --> UC6
+
+@enduml

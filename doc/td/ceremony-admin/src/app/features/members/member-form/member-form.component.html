@@ -1,0 +1,134 @@
+<div class="member-form-container">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>
+        <h2>{{ isEditMode ? 'Modifier le Membre' : 'Nouveau Membre' }}</h2>
+      </mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content>
+      <form [formGroup]="memberForm" (ngSubmit)="onSubmit()">
+        <div class="form-grid">
+          
+          <!-- Photo -->
+          <div class="photo-section">
+            <div class="photo-preview">
+              <img [src]="photoPreview || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxjaXJjbGUgY3g9IjUwIiBjeT0iNTAiIHI9IjUwIiBmaWxsPSIjRjVGNUY1Ii8+CjxjaXJjbGUgY3g9IjUwIiBjeT0iMzUiIHI9IjE1IiBmaWxsPSIjQzRDNEM0Ii8+CjxwYXRoIGQ9Ik0yMCA4NWMwLTE1IDEyLjUtMjcuNSAyOC0yNy41czI4IDEyLjUgMjggMjcuNSIgc3Ryb2tlPSIjQzRDNEM0IiBzdHJva2Utd2lkdGg9IjQiIGZpbGw9Im5vbmUiLz4KPC9zdmc+'" alt="Photo">
+            </div>
+            <input type="file" #fileInput hidden (change)="onFileSelected($event)" accept="image/*">
+            <button mat-raised-button type="button" (click)="fileInput.click()">
+              <mat-icon>photo_camera</mat-icon>
+              Changer la photo
+            </button>
+          </div>
+
+          <!-- Informations personnelles -->
+          <div class="form-section">
+            <h3>Informations Personnelles</h3>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Prénom</mat-label>
+              <input matInput formControlName="firstName">
+              <mat-icon matPrefix>person</mat-icon>
+              <mat-error *ngIf="f['firstName'].hasError('required')">
+                Le prénom est requis
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Nom</mat-label>
+              <input matInput formControlName="lastName">
+              <mat-icon matPrefix>person</mat-icon>
+              <mat-error *ngIf="f['lastName'].hasError('required')">
+                Le nom est requis
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Date de naissance</mat-label>
+              <input matInput [matDatepicker]="picker" formControlName="dateOfBirth">
+              <mat-datepicker-toggle matPrefix [for]="picker"></mat-datepicker-toggle>
+              <mat-datepicker #picker></mat-datepicker>
+            </mat-form-field>
+          </div>
+
+          <!-- Contact -->
+          <div class="form-section">
+            <h3>Contact</h3>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Téléphone</mat-label>
+              <input matInput formControlName="phoneNumber" placeholder="221771234567">
+              <mat-icon matPrefix>phone</mat-icon>
+              <mat-error *ngIf="f['phoneNumber'].hasError('required')">
+                Le téléphone est requis
+              </mat-error>
+              <mat-error *ngIf="f['phoneNumber'].hasError('pattern')">
+                Format invalide (9-15 chiffres)
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Téléphone secondaire</mat-label>
+              <input matInput formControlName="secondaryPhone">
+              <mat-icon matPrefix>phone</mat-icon>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Email</mat-label>
+              <input matInput formControlName="email" type="email">
+              <mat-icon matPrefix>email</mat-icon>
+              <mat-error *ngIf="f['email'].hasError('email')">
+                Email invalide
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Adresse</mat-label>
+              <textarea matInput formControlName="address" rows="3"></textarea>
+              <mat-icon matPrefix>home</mat-icon>
+            </mat-form-field>
+          </div>
+
+          <!-- Contact d'urgence -->
+          <div class="form-section">
+            <h3>Contact d'Urgence</h3>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Nom du contact</mat-label>
+              <input matInput formControlName="emergencyContact">
+              <mat-icon matPrefix>contact_emergency</mat-icon>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Téléphone d'urgence</mat-label>
+              <input matInput formControlName="emergencyPhone">
+              <mat-icon matPrefix>phone</mat-icon>
+            </mat-form-field>
+          </div>
+
+          <!-- Notes -->
+          <div class="form-section full-width">
+            <h3>Notes</h3>
+            <mat-form-field appearance="outline">
+              <mat-label>Notes additionnelles</mat-label>
+              <textarea matInput formControlName="notes" rows="4"></textarea>
+            </mat-form-field>
+          </div>
+
+        </div>
+
+        <!-- Actions -->
+        <div class="form-actions">
+          <button mat-button type="button" (click)="cancel()">
+            Annuler
+          </button>
+          <button mat-raised-button color="primary" type="submit" [disabled]="loading">
+            <mat-spinner *ngIf="loading" diameter="20"></mat-spinner>
+            <span *ngIf="!loading">{{ isEditMode ? 'Modifier' : 'Créer' }}</span>
+          </button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>

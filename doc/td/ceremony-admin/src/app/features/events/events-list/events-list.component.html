@@ -1,0 +1,123 @@
+<p>events-list works!</p>
+<div class="events-container">
+  <div class="header">
+    <h1>Gestion des Événements</h1>
+    <div class="header-actions">
+      <mat-button-toggle-group [(value)]="viewMode">
+        <mat-button-toggle value="list">
+          <mat-icon>view_list</mat-icon>
+          Liste
+        </mat-button-toggle>
+        <mat-button-toggle value="calendar">
+          <mat-icon>calendar_month</mat-icon>
+          Calendrier
+        </mat-button-toggle>
+      </mat-button-toggle-group>
+
+      <button mat-raised-button color="primary" (click)="addEvent()">
+        <mat-icon>add</mat-icon>
+        Nouvel Événement
+      </button>
+    </div>
+  </div>
+
+  <!-- Filtres -->
+  <mat-card class="filters-card">
+    <mat-chip-listbox [value]="selectedFilter" (change)="selectedFilter = $event.value">
+      <mat-chip-option value="all">
+        <mat-icon>event</mat-icon>
+        Tous ({{events.length}})
+      </mat-chip-option>
+      <mat-chip-option value="upcoming">
+        <mat-icon>upcoming</mat-icon>
+        À venir ({{upcomingEvents.length}})
+      </mat-chip-option>
+      <mat-chip-option value="past">
+        <mat-icon>history</mat-icon>
+        Passés ({{pastEvents.length}})
+      </mat-chip-option>
+    </mat-chip-listbox>
+  </mat-card>
+
+  <div *ngIf="loading" class="loading">
+    <mat-spinner></mat-spinner>
+  </div>
+
+  <!-- Vue Liste -->
+  <div *ngIf="!loading && viewMode === 'list'" class="events-grid">
+    <mat-card *ngFor="let event of getDisplayedEvents()" class="event-card">
+      <mat-card-header [style.borderLeft]="'4px solid ' + getEventTypeConfig(event.type).color">
+        <div mat-card-avatar class="event-icon" 
+             [style.backgroundColor]="getEventTypeConfig(event.type).color">
+          <mat-icon>{{getEventTypeConfig(event.type).icon}}</mat-icon>
+        </div>
+        <mat-card-title>{{event.title}}</mat-card-title>
+        <mat-card-subtitle>
+          <mat-chip>{{getEventTypeConfig(event.type).label}}</mat-chip>
+        </mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        <div class="event-info">
+          <div class="info-item">
+            <mat-icon>calendar_today</mat-icon>
+            <span>{{formatDate(event.startDate)}}</span>
+          </div>
+          <div class="info-item">
+            <mat-icon>schedule</mat-icon>
+            <span>{{formatTime(event.startDate)}}</span>
+          </div>
+          <div class="info-item" *ngIf="event.location">
+            <mat-icon>place</mat-icon>
+            <span>{{event.location}}</span>
+          </div>
+          <div class="info-item">
+            <mat-icon>people</mat-icon>
+            <span>{{event.participants.length}} participant(s)</span>
+          </div>
+        </div>
+
+        <p class="event-description" *ngIf="event.description">
+          {{event.description}}
+        </p>
+
+        <!-- Badge jours restants -->
+        <div class="days-badge" *ngIf="getDaysUntil(event.startDate) > 0">
+          <mat-chip color="accent">
+            <mat-icon>timer</mat-icon>
+            Dans {{getDaysUntil(event.startDate)}} jour(s)
+          </mat-chip>
+        </div>
+      </mat-card-content>
+
+      <mat-card-actions>
+        <button mat-button (click)="viewEvent(event)">
+          <mat-icon>visibility</mat-icon>
+          Voir
+        </button>
+        <button mat-button (click)="editEvent(event)">
+          <mat-icon>edit</mat-icon>
+          Modifier
+        </button>
+        <button mat-button color="warn" (click)="deleteEvent(event)">
+          <mat-icon>delete</mat-icon>
+          Supprimer
+        </button>
+      </mat-card-actions>
+    </mat-card>
+
+    <div *ngIf="getDisplayedEvents().length === 0" class="empty-state">
+      <mat-icon>event_busy</mat-icon>
+      <p>Aucun événement trouvé</p>
+    </div>
+  </div>
+
+  <!-- Vue Calendrier -->
+  <div *ngIf="!loading && viewMode === 'calendar'" class="calendar-view">
+    <mat-card>
+      <mat-card-content>
+        <full-calendar [options]="calendarOptions"></full-calendar>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

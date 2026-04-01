@@ -1,0 +1,24 @@
+@startuml
+title Gestion des Ressources Humaines
+
+actor Employé
+actor Manager RH
+actor Administrateur
+
+usecase "Gérer employés" as UC1
+usecase "Demander congés" as UC2
+usecase "Approuver congés" as UC3
+usecase "Enregistrer présence" as UC4
+usecase "Évaluer performance" as UC5
+
+Employé --> UC1
+Employé --> UC2
+Employé --> UC4
+
+Manager RH --> UC1
+Manager RH --> UC3
+Manager RH --> UC5
+
+Administrateur --> UC1
+
+@enduml

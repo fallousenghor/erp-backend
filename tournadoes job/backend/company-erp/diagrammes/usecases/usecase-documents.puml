@@ -1,0 +1,60 @@
+@startuml usecase-documents
+title Diagramme de Cas d'Utilisation - Gestion Documentaire & Rapports
+left to right direction
+skinparam packageStyle rectangle
+skinparam actorStyle rectangle
+
+actor "Administrateur" as Admin #LightBlue
+actor "Employé" as Employee #LightGreen
+actor "Comptable" as Accountant #LightYellow
+
+package "Gestion des Documents" {
+  usecase "Créer document" as UC_Doc_Create
+  usecase "Consulter documents" as UC_Doc_Read
+  usecase "Modifier document" as UC_Doc_Update
+  usecase "Supprimer document" as UC_Doc_Delete
+  usecase "Signer document" as UC_Doc_Sign
+}
+
+package "Tableau de Bord" {
+  usecase "Voir dashboard global" as UC_Dashboard_Global
+  usecase "Voir activité récente" as UC_Dashboard_Activity
+  usecase "Voir performance" as UC_Dashboard_Performance
+}
+
+package "Rapports & Audits" {
+  usecase "Générer rapports" as UC_Report_Generate
+  usecase "Consulter audits" as UC_Audit_Read
+  usecase "Exporter données" as UC_Report_Export
+}
+
+' Relations Administrateur
+Admin --> UC_Doc_Create
+Admin --> UC_Doc_Read
+Admin --> UC_Doc_Update
+Admin --> UC_Doc_Delete
+Admin --> UC_Doc_Sign
+Admin --> UC_Dashboard_Global
+Admin --> UC_Dashboard_Activity
+Admin --> UC_Dashboard_Performance
+Admin --> UC_Report_Generate
+Admin --> UC_Audit_Read
+Admin --> UC_Report_Export
+
+' Relations Employé
+Employee --> UC_Doc_Read
+Employee --> UC_Doc_Create
+Employee --> UC_Dashboard_Global
+Employee --> UC_Dashboard_Activity
+
+' Relations Comptable
+Accountant --> UC_Doc_Read
+Accountant --> UC_Doc_Create
+Accountant --> UC_Dashboard_Global
+Accountant --> UC_Report_Generate
+
+' Relations Include/Extend
+UC_Doc_Sign ..> UC_Doc_Read : <<include>>
+UC_Report_Generate ..> UC_Dashboard_Global : <<include>>
+
+@enduml

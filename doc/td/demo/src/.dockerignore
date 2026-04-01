@@ -1,0 +1,11 @@
+# .dockerignore
+target/
+!target/*.jar
+.mvn/
+mvnw
+mvnw.cmd
+*.log
+.git
+.gitignore
+.env
+uploads/
